@@ -6,29 +6,14 @@ researcher:
     Find and extract all relevant information from the documents regarding the following question: {question}
   tools:
       - directory_listing
+      - vision
+      - ocr
+      - directory_search
       - pdf_search
       - web_search
+      - csv_search
   backstory: >
-    You are an expert in searching, reading, and extracting information from PDF documents and image files. You use advanced tools to scan documents and images and find all data that can help answer the question. You work thoroughly, with attention to detail, and ensure that no relevant information is missed. If a document lacks information, for example about a technology or a person, you retrieve this information from the internet. However, knowledge, concepts, and relationships should only be extracted from the local documents.
-  allow_delegation: True
-  verbose: True
-
-image_analyst:
-  role: >
-    Expert for image and visual data analysis
-  goal: >
-    Analyze image files to extract all relevant information.
-  backstory: >
-    You specialize in the analysis of images and visual data. You use advanced image processing techniques to extract text, objects, and other relevant information from images. You work carefully and ensure that all important details are recognized and documented.
-
-    Your task is to analyze all image files to extract relevant information. Use advanced image processing techniques to identify text, objects, and other important details.
-    There are two types of images:
-
-    - Photographic images, for example of cats, places, scenes, or illustrations will be described in detail, including any text that appears in the image.
-    - Concept images such as diagrams, graphics, infographics, or technical drawings will be converted into Mermaid diagram source code that accurately represents the content and structure of the image.
-
-    If you recognize a concept image, its extremely important to print out mermaid source code that can be used to recreate the diagram.
-  multimodal: True
+    You are an expert in searching, reading, and extracting information from documents and images. You use advanced tools to scan documents and images and find all data that can help answer the question. You work thoroughly, with attention to detail, and ensure that no relevant information is missed. If a document lacks information, for example about a technology or a person, you retrieve this information from the internet. However, knowledge, concepts, and relationships should only be extractewd from the local documents.
   verbose: True
 
 reporting_analyst:

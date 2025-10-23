@@ -1,9 +1,18 @@
+from typing import List
+
 from crewai import Agent, Crew, Process, Task
 from crewai.project import CrewBase, agent, crew, task, tool
 from crewai.tools import BaseTool
 from crewai.agents.agent_builder.base_agent import BaseAgent
-from crewai_tools import SerperDevTool, PDFSearchTool, DirectoryReadTool
-from typing import List
+from crewai_tools import (
+    SerperDevTool,
+    PDFSearchTool,
+    DirectoryReadTool,
+    DirectorySearchTool,
+    CSVSearchTool,
+    OCRTool,
+    VisionTool,
+)
 
 # If you want to run a snippet of code before or after the crew starts,
 # you can use the @before_kickoff and @after_kickoff decorators
@@ -31,7 +40,23 @@ class ProjectResearchCrew:
 
     @tool
     def directory_listing(self) -> BaseTool:
-        return DirectoryReadTool(directory="./files")
+        return DirectoryReadTool(directory="./knowledge/documents")
+
+    @tool
+    def directory_search(self) -> BaseTool:
+        return DirectorySearchTool(directory="./knowledge/documents")
+
+    @tool
+    def csv_search(self) -> BaseTool:
+        return CSVSearchTool()
+
+    @tool
+    def ocr(self) -> BaseTool:
+        return OCRTool()
+
+    @tool
+    def vision(self) -> BaseTool:
+        return VisionTool()
 
     # If you would like to add tools to your agents, you can learn more about it here:
     # https://docs.crewai.com/concepts/agents#agent-tools
@@ -39,12 +64,6 @@ class ProjectResearchCrew:
     def researcher(self) -> Agent:
         return Agent(
             config=self.agents_config["researcher"],  # type: ignore[index]
-        )
-
-    @agent
-    def image_analyst(self) -> Agent:
-        return Agent(
-            config=self.agents_config["image_analyst"],  # type: ignore[index]
         )
 
     @agent

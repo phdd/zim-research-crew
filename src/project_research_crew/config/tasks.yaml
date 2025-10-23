@@ -1,7 +1,7 @@
 
 research_task:
   description: >
-    Search all available PDF and image files for information relevant to the question "{question}". Use vision and document analysis tools to extract facts, data, or statements that may help answer the question. For each piece of information found, document the source (file name, page, or image, URL). Image analysis will be delegated to the image analyst agent.
+    Search all available documents and images for information relevant to the question "{question}". Use vision and document analysis tools to extract facts, data, or statements that may help answer the question. For each piece of information found, document the source (file name, page, or image, URL). Image analysis will be delegated to the image analyst agent.
     
     Today is {current_date}.
   expected_output: >
