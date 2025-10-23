@@ -1,0 +1,20 @@
+
+research_task:
+  description: >
+    Search all available PDF and image files for information relevant to the question "{question}". Use vision and document analysis tools to extract facts, data, or statements that may help answer the question. For each piece of information found, document the source (file name, page, or image, URL). Image analysis will be delegated to the image analyst agent.
+    
+    Today is {current_date}.
+  expected_output: >
+    A structured list of all relevant facts, data, or statements from the PDF and image files, each with a source reference.
+  agent: researcher
+  # human_input: True
+
+reporting_task:
+  description: >
+    Review all extracted information from research. Summarize, group, and structure the results into a comprehensive report that directly answers the question "{question}". Ensure that the report is clear, actionable, and includes source references for all key points.
+    
+    Today is {current_date}.
+  expected_output: >
+    A detailed, well-structured report answering the question, with sections for each main finding and source references for all extracted information. The report will be the same language as the question. Format as Markdown without "```".
+  agent: reporting_analyst
+  output_file: report.md
