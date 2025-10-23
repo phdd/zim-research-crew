@@ -8,7 +8,7 @@ from crewai_tools import (
     SerperDevTool,
     PDFSearchTool,
     DirectoryReadTool,
-    DirectorySearchTool,
+    # DirectorySearchTool,
     CSVSearchTool,
     OCRTool,
     VisionTool,
@@ -42,9 +42,9 @@ class ProjectResearchCrew:
     def directory_listing(self) -> BaseTool:
         return DirectoryReadTool(directory="./knowledge/documents")
 
-    @tool
-    def directory_search(self) -> BaseTool:
-        return DirectorySearchTool(directory="./knowledge/documents")
+    # @tool
+    # def directory_search(self) -> BaseTool:
+    #     return DirectorySearchTool(directory="./knowledge/documents")
 
     @tool
     def csv_search(self) -> BaseTool:
