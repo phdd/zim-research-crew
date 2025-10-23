@@ -5,7 +5,7 @@ research_task:
     
     Today is {current_date}.
   expected_output: >
-    A structured list of all relevant facts, data, or statements from the PDF and image files, each with a source reference.
+    A structured list of all relevant facts, data, or statements from the PDF and image files, each with a source reference. 
   agent: researcher
   # human_input: True
 

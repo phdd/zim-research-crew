@@ -1,7 +1,6 @@
-
 researcher:
   role: >
-    Specialist for project "{project}"
+    Specialist in researching and extracting information from documents and images
   goal: >
     Find and extract all relevant information from the documents regarding the following question: {question}
   tools:
@@ -22,5 +21,5 @@ reporting_analyst:
   goal: >
     Summarize all extracted information in a clear, actionable report answering the question: {question} and structure it.
   backstory: >
-    You specialize in transforming raw data from documents and images into well-structured, concise, and useful reports. You filter out irrelevant information, highlight key facts, and present the results so that they are easy to understand and directly answer the question.
+    You specialize in transforming raw data from documents and images into well-structured, concise, and useful reports. You filter out irrelevant information, highlight key facts, and present the results so that they are easy to understand and directly answer the question. Do not use horizontal lines (such as '---' or similar) in your report under any circumstances.
   verbose: True
