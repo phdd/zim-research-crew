@@ -1,6 +1,16 @@
+## CrewAI Online (Cloud) Login & Trace Feature
+
+To use CrewAI Online (Cloud) and review your crew's activities, you can log in with the following command:
+
+```bash
+uv run crewai login
+```
+
+After logging in, you will be able to view traces. This feature allows you to track and understand exactly what actions and decisions your crew has made.
+
 # Project Research Crew
 
-Welcome to the ProjectResearchCrew Crew project, powered by [crewAI](https://crewai.com). This template is designed to help you set up a multi-agent AI system with ease, leveraging the powerful and flexible framework provided by crewAI. Our goal is to enable your agents to collaborate effectively on complex tasks, maximizing their collective intelligence and capabilities.
+Welcome to the Project, powered by [crewAI](https://crewai.com). This template is designed to help you set up a multi-agent AI system with ease, leveraging the powerful and flexible framework provided by crewAI. Our goal is to enable your agents to collaborate effectively on complex tasks, maximizing their collective intelligence and capabilities.
 
 ## Installation
 
@@ -16,10 +26,21 @@ Next, navigate to your project directory and install the dependencies:
 
 (Optional) Lock the dependencies and install them by using the CLI command:
 ```bash
-$ uv run crewai install
+uv run crewai install
 ```
 
 Copy the `.env.example` file to `.env` and enter your `OPENAI_API_KEY` there.
+
+
+## CrewAI Cloud
+
+To use CrewAI Online (Cloud) and review your crew's activities, you can log in with the following command:
+
+```bash
+uv run crewai login
+```
+
+After logging in, you will be able to view traces. This feature allows you to track and understand exactly what actions and decisions your crew has made.
 
 ## Knowledge Base Documents
 
@@ -37,7 +58,7 @@ Place all documents that should serve as a basis for research in the `knowledge/
 To kickstart your crew of AI agents and begin task execution, run this from the root folder of your project:
 
 ```bash
-$ uv run crewai run
+uv run crewai run
 ```
 
 ### Run with Chainlit Frontend
@@ -45,20 +66,20 @@ $ uv run crewai run
 To run the Crew with a Chainlit frontend for enhanced interaction and visualization, use the following command from the root folder of your project:
 
 ```bash
-$ uv run chainlit run chainlit.py
+uv run chainlit run chainlit.py
 ```
 
-This command initializes the project-research-crew Crew, assembling the agents and assigning them tasks as defined in your configuration.
+This command initializes the project-research-crew, assembling the agents and assigning them tasks as defined in your configuration.
 
 This example, unmodified, will run the create a `report.md` file with the output of a research on LLMs in the root folder.
 
 ## Understanding Your Crew
 
-The project-research-crew Crew is composed of multiple AI agents, each with unique roles, goals, and tools. These agents collaborate on a series of tasks, defined in `config/tasks.yaml`, leveraging their collective skills to achieve complex objectives. The `config/agents.yaml` file outlines the capabilities and configurations of each agent in your crew.
+The project-research-crew is composed of multiple AI agents, each with unique roles, goals, and tools. These agents collaborate on a series of tasks, defined in `config/tasks.yaml`, leveraging their collective skills to achieve complex objectives. The `config/agents.yaml` file outlines the capabilities and configurations of each agent in your crew.
 
 ## Support
 
-For support, questions, or feedback regarding the ProjectResearchCrew Crew or crewAI.
+For support, questions, or feedback regarding the Crew or crewAI.
 - Visit our [documentation](https://docs.crewai.com)
 - Reach out to us through our [GitHub repository](https://github.com/joaomdmoura/crewai)
 - [Join our Discord](https://discord.com/invite/X4JWnZnxPb)
