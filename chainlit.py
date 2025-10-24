@@ -4,8 +4,6 @@ import chainlit as cl
 from datetime import datetime
 
 from dotenv import load_dotenv
-from chainlit import run_sync
-from crewai.tools import BaseTool
 from crewai.tasks.task_output import TaskOutput
 from crewai.tools.tool_types import ToolResult
 from crewai.agents.parser import AgentFinish
@@ -14,28 +12,6 @@ from crewai.agents.parser import AgentAction
 from project_research_crew.crew import ProjectResearchCrew
 
 load_dotenv()
-
-
-def ask_human(question: str) -> str:
-    human_response = run_sync(cl.AskUserMessage(content=f"{question}").send())
-
-    if human_response and "output" in human_response:
-        return human_response["output"]
-    else:
-        return "No response."
-
-
-class HumanInputContextTool(BaseTool):
-    name: str = "Ask Human a questions"
-    description: str = (
-        "Use this tool to ask questions to the human in case additional context is needed"
-    )
-
-    def _run(self, question: str) -> str:
-        return ask_human(question)
-
-
-human_tool = HumanInputContextTool()
 
 
 async def callback(payload):
