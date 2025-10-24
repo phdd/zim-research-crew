@@ -16,7 +16,7 @@ Next, navigate to your project directory and install the dependencies:
 
 (Optional) Lock the dependencies and install them by using the CLI command:
 ```bash
-crewai install
+$ uv run crewai install
 ```
 
 Copy the `.env.example` file to `.env` and enter your `OPENAI_API_KEY` there.
@@ -37,7 +37,15 @@ Place all documents that should serve as a basis for research in the `knowledge/
 To kickstart your crew of AI agents and begin task execution, run this from the root folder of your project:
 
 ```bash
-$ crewai run
+$ uv run crewai run
+```
+
+### Run with Chainlit Frontend
+
+To run the Crew with a Chainlit frontend for enhanced interaction and visualization, use the following command from the root folder of your project:
+
+```bash
+$ uv run chainlit run chainlit.py
 ```
 
 This command initializes the project-research-crew Crew, assembling the agents and assigning them tasks as defined in your configuration.
