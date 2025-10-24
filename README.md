@@ -1,4 +1,4 @@
-# ProjectResearchCrew Crew
+# Project Research Crew
 
 Welcome to the ProjectResearchCrew Crew project, powered by [crewAI](https://crewai.com). This template is designed to help you set up a multi-agent AI system with ease, leveraging the powerful and flexible framework provided by crewAI. Our goal is to enable your agents to collaborate effectively on complex tasks, maximizing their collective intelligence and capabilities.
 
@@ -18,9 +18,14 @@ Next, navigate to your project directory and install the dependencies:
 ```bash
 crewai install
 ```
-### Customizing
 
-**Add your `OPENAI_API_KEY` into the `.env` file**
+Copy the `.env.example` file to `.env` and enter your `OPENAI_API_KEY` there.
+
+## Knowledge Base Documents
+
+Place all documents that should serve as a basis for research in the `knowledge/documents` folder. This includes PDF files, images, CSVs, or any other relevant file formats.
+
+### Customizing
 
 - Modify `src/project_research_crew/config/agents.yaml` to define your agents
 - Modify `src/project_research_crew/config/tasks.yaml` to define your tasks
