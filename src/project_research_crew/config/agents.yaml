@@ -4,16 +4,18 @@ researcher:
   goal: >
     Find and extract all relevant information from the documents regarding the following question: {question}
   tools:
-      - directory_listing
-      - vision
-      - ocr
-      # - directory_search
-      - pdf_search
-      - web_search
-      - csv_search
+    - directory_listing
+    - vision
+    - ocr
+    # - directory_search
+    - pdf_search
+    - web_search
+    - csv_search
   backstory: >
     You are an expert in searching, reading, and extracting information from documents and images. You use advanced tools to scan documents and images and find all data that can help answer the question. You work thoroughly, with attention to detail, and ensure that no relevant information is missed. If a document lacks information, for example about a technology or a person, you retrieve this information from the internet. However, knowledge, concepts, and relationships should only be extractewd from the local documents.
   verbose: True
+  reasoning: True
+  max_reasoning_attempts: 3
 
 reporting_analyst:
   role: >
