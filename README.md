@@ -1,13 +1,3 @@
-## CrewAI Online (Cloud) Login & Trace Feature
-
-To use CrewAI Online (Cloud) and review your crew's activities, you can log in with the following command:
-
-```bash
-uv run crewai login
-```
-
-After logging in, you will be able to view traces. This feature allows you to track and understand exactly what actions and decisions your crew has made.
-
 # Project Research Crew
 
 Welcome to the Project, powered by [crewAI](https://crewai.com). This template is designed to help you set up a multi-agent AI system with ease, leveraging the powerful and flexible framework provided by crewAI. Our goal is to enable your agents to collaborate effectively on complex tasks, maximizing their collective intelligence and capabilities.
@@ -42,11 +32,30 @@ uv run crewai login
 
 After logging in, you will be able to view traces. This feature allows you to track and understand exactly what actions and decisions your crew has made.
 
-## Knowledge Base Documents
+## Knowledge Base
 
-Place all documents that should serve as a basis for research in the `knowledge/documents` folder. This includes PDF files, images, CSVs, or any other relevant file formats.
 
-### Customizing
+**Important:** To import the documents for the knowledge base, you must first run the following command:
+
+```bash
+uv run knowledge_import
+```
+
+Only after this step will the documents be available for research.
+
+Place all documents that should serve as a basis for research in the `knowledge/` folder. This includes PDF files, images, CSVs, or any other relevant file formats.
+
+## Crew Memory
+
+If you want to delete or reset the memories of your crew, you can use the following command:
+
+```bash
+uv run crewai reset-memories --help
+```
+
+This command provides options to clear the stored memories of your crew agents.
+
+## Customizing
 
 - Modify `src/project_research_crew/config/agents.yaml` to define your agents
 - Modify `src/project_research_crew/config/tasks.yaml` to define your tasks
@@ -66,7 +75,7 @@ uv run crewai run
 To run the Crew with a Chainlit frontend for enhanced interaction and visualization, use the following command from the root folder of your project:
 
 ```bash
-uv run chainlit run chainlit.py
+uv run chainlit run src/project_research_crew/chainlit.py
 ```
 
 This command initializes the project-research-crew, assembling the agents and assigning them tasks as defined in your configuration.

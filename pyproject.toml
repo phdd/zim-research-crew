@@ -7,6 +7,7 @@ requires-python = ">=3.10,<3.14"
 dependencies = [
     "chainlit>=2.8.3",
     "crewai[tools]==1.1.0",
+    "docling>=2.58.0",
     "qdrant-client>=1.15.1",
 ]
 
@@ -17,6 +18,7 @@ train = "project_research_crew.main:train"
 replay = "project_research_crew.main:replay"
 test = "project_research_crew.main:test"
 run_with_trigger = "project_research_crew.main:run_with_trigger"
+knowledge_import = "project_research_crew.main:knowledge_import"
 
 [build-system]
 requires = ["hatchling"]

@@ -1,11 +1,19 @@
 #!/usr/bin/env python
 import os
-from pathlib import Path
 import sys
+from uuid import uuid4
 import warnings
 
 from datetime import datetime
+from pathlib import Path
 
+from docling.datamodel.base_models import InputFormat
+from docling.document_converter import DocumentConverter
+from docling_core.transforms.chunker.hierarchical_chunker import HierarchicalChunker
+from docling.datamodel.base_models import InputFormat
+from docling.document_converter import DocumentConverter
+
+from crewai.utilities.constants import KNOWLEDGE_DIRECTORY
 from project_research_crew.crew import ProjectResearchCrew
 
 warnings.filterwarnings("ignore", category=SyntaxWarning, module="pysbd")
@@ -22,9 +30,8 @@ def run():
     """
     inputs = {
         "current_date": datetime.now().strftime("%Y-%m-%d"),
-        "project": os.getenv("PROJECT", "Construct-X"),
         "question": os.getenv(
-            "QUESTION", "Which files do we have and what do they contain?"
+            "QUESTION", "Who is sit.institute GmbH?"
         ),
     }
 
@@ -101,3 +108,51 @@ def run_with_trigger():
         return result
     except Exception as e:
         raise Exception(f"An error occurred while running the crew with trigger: {e}")
+
+
+def knowledge_import():
+    """
+    Consume knowledge into the crew's knowledge storage.
+    """
+    crew = ProjectResearchCrew().crew()
+
+    assert crew.knowledge is not None
+    assert crew.knowledge.storage is not None
+
+    file_path = Path(KNOWLEDGE_DIRECTORY)
+    file_paths = [str(p) for p in file_path.rglob("*") if p.is_file()]
+
+    converter = DocumentConverter(
+        allowed_formats=[
+            InputFormat.MD,
+            InputFormat.ASCIIDOC,
+            InputFormat.PDF,
+            InputFormat.DOCX,
+            InputFormat.HTML,
+            InputFormat.IMAGE,
+            InputFormat.XLSX,
+            InputFormat.PPTX,
+        ]
+    )
+
+    conv_results_iter = list(converter.convert_all(file_paths))
+    content = [result.document for result in conv_results_iter]
+    chunker = HierarchicalChunker()
+    chunks = []
+    
+    client = crew.knowledge.storage._get_client()
+    client.delete_collection(collection_name="knowledge_crew")
+
+    for doc in content:
+        with open(f"./knowledge-import/{doc.name}.md", "w") as f:
+            f.write(doc.export_to_markdown())
+
+        for chunk in chunker.chunk(doc):
+            metadata = chunk.meta.origin.model_dump() # type: ignore
+            chunks.append({
+                "doc_id": uuid4().hex,
+                "metadata": metadata,
+                "content": f"{chunk.text}\n\nMetadata: {metadata}",
+            })
+
+    client.add_documents(collection_name="knowledge_crew", documents=chunks)

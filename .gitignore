@@ -2,4 +2,9 @@
 __pycache__/
 .DS_Store
 .files
+
+knowledge/*
+knowledge-import/*
+!knowledge_import/.gitkeep
+
 report.md
