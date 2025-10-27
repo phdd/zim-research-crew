@@ -9,15 +9,20 @@ Welcome to the Project, powered by [crewAI](https://crewai.com). This template i
 	pip install uv
 	uv run crewai install
 	```
-2. Import your knowledge documents from the `knowledge/` folder:
-	```bash
-	uv run knowledge_import
-	```
-3. Start the Chainlit frontend:
-	```bash
-	uv run chainlit run src/project_research_crew/chainlit.py
-	```
-After step 3, your browser will open the Chainlit UI for interactive use.
+2. Copy the example environment file and add your OpenAI key:
+   ```bash
+   cp .env.example .env
+   # Edit .env and enter your OPENAI_API_KEY and SERPER_API_KEY
+   ```
+3. Import your knowledge documents:
+   ```bash
+   uv run knowledge_import
+   ```
+4. Start the Chainlit frontend:
+   ```bash
+   uv run chainlit run src/project_research_crew/chainlit.py
+   ```
+After step 4, your browser will open the Chainlit UI for interactive use.
 
 ## Installation
 
