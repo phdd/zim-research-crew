@@ -119,6 +119,12 @@ def knowledge_import():
     assert crew.knowledge is not None
     assert crew.knowledge.storage is not None
 
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding='utf-8') # type: ignore
+    
+    if hasattr(sys.stderr, "reconfigure"):
+        sys.stderr.reconfigure(encoding='utf-8') # type: ignore
+
     file_path = Path(KNOWLEDGE_DIRECTORY)
     file_paths = [str(p) for p in file_path.rglob("*") if p.is_file()]
 
