@@ -2,6 +2,23 @@
 
 Welcome to the Project, powered by [crewAI](https://crewai.com). This template is designed to help you set up a multi-agent AI system with ease, leveraging the powerful and flexible framework provided by crewAI. Our goal is to enable your agents to collaborate effectively on complex tasks, maximizing their collective intelligence and capabilities.
 
+## TLDR: How to start UI
+
+1. Install dependencies (if not done yet):
+	```bash
+	pip install uv
+	uv run crewai install
+	```
+2. Import your knowledge documents from the `knowledge/` folder:
+	```bash
+	uv run knowledge_import
+	```
+3. Start the Chainlit frontend:
+	```bash
+	uv run chainlit run src/project_research_crew/chainlit.py
+	```
+After step 3, your browser will open the Chainlit UI for interactive use.
+
 ## Installation
 
 Ensure you have Python >=3.10 <3.14 installed on your system. This project uses [UV](https://docs.astral.sh/uv/) for dependency management and package handling, offering a seamless setup and execution experience.
