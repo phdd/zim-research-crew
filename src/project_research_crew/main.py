@@ -135,11 +135,32 @@ def knowledge_import():
         ]
     )
 
-    conv_results_iter = list(converter.convert_all(file_paths))
+    allowed_suffixes = {fmt.value for fmt in converter.allowed_formats}
+    valid_files = []
+    ignored_files = []
+
+    for path in file_paths:
+        if not Path(path).exists():
+            ignored_files.append(f"Not found: {path}")
+        elif not any(str(path).lower().endswith(suffix) for suffix in allowed_suffixes):
+            ignored_files.append(f"Unsupported format: {path}")
+        else:
+            valid_files.append(path)
+
+    if ignored_files:
+        print("The following files were ignored:")
+        for f in ignored_files:
+            print(f"  - {f}")
+
+    if not valid_files:
+        print("No valid files found for import.")
+        return
+
+    conv_results_iter = list(converter.convert_all(valid_files))
     content = [result.document for result in conv_results_iter]
     chunker = HierarchicalChunker()
     chunks = []
-    
+
     client = crew.knowledge.storage._get_client()
     client.delete_collection(collection_name="knowledge_crew")
 
