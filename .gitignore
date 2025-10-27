@@ -4,6 +4,7 @@ __pycache__/
 .files
 
 knowledge/*
+!knowledge/.gitkeep
 knowledge-import/*
 !knowledge_import/.gitkeep
 
