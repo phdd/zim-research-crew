@@ -14,7 +14,7 @@ Welcome to the Project, powered by [crewAI](https://crewai.com). This template i
    cp .env.example .env
    # Edit .env and enter your OPENAI_API_KEY and SERPER_API_KEY
    ```
-3. Import your knowledge documents:
+3. Import your knowledge documents from the `knowledge/` folder:
    ```bash
    uv run knowledge_import
    ```
