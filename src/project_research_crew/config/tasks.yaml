@@ -37,9 +37,10 @@ review_output:
     {user_input}
     ---
 
-    Review the output for structure, clarity, factual completeness and writing quality. If improvements are needed, point them out specifically. If the text is solid, approve it confidently.
+    Review the output for structure, clarity, factual completeness, writing quality, and especially for correct and complete source citations. Every statement must have a source (filename for internal knowledge, URL/site for web). If improvements are needed, point them out specifically. If the text is solid, approve it confidently.
 
   expected_output: >
-    A short review with clear feedback: either approval with reasoning, or suggestions for improvement.
+    A short review with clear feedback: either approval with reasoning, or suggestions for improvement. Explicitly mention if source citations are missing or incorrect.
 
   agent: critic
+  llm: gpt-4.1

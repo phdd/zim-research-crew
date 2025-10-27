@@ -83,8 +83,8 @@ class ProjectResearchCrew:
             tasks=self.tasks,
             knowledge_sources=[StringKnowledgeSource(content="dummy source")],
             process=Process.sequential,
-            # manager_llm="gpt-4.1",
-            # planning=True,
+            manager_llm="gpt-4.1",
+            planning=True,
             # memory=True,
             verbose=True,
         )
