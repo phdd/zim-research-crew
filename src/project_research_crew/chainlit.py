@@ -45,7 +45,7 @@ async def on_message(message: cl.Message):
     result = await asyncio.to_thread(
         crew.kickoff,
         inputs={
-            "question": message.content,
+            "user_input": message.content,
             "current_date": datetime.now().strftime("%Y-%m-%d"),
         },
     )

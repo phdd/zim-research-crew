@@ -1,20 +1,45 @@
+research_input:
+  description: |
+    The user submitted the following request:
 
-research_task:
-  description: >
-    Search all available documents and images for information relevant to the question "{question}". Use vision and document analysis tools to extract facts, data, or statements that may help answer the question. For each piece of information found, document the source (file name, page, or image, URL). Image analysis will be delegated to the image analyst agent.
-    
-    Today is {current_date}.
-  expected_output: >
-    A structured list of all relevant facts, data, or statements from the PDF and image files, each with a source reference. 
+    ---
+    {user_input}
+    ---
+
+    Your job is to research relevant facts, insights and data — using both internal knowledge and web search. Organize your findings clearly. Use bullet points grouped by topic, theme, or aspect. For every finding that comes from the internal knowledge base, you must always cite the filename as the source (the filename is always available in the metadata). If a finding comes from the web, cite the URL or site name. Do not write full answers or explanations — just provide factual, structured findings.
+
+  expected_output: |
+    A clean and structured list of research notes. Use bullet points, grouped by topic. Every bullet point must include a source: the filename (for internal knowledge) or the URL/site (for web search). Do not write conclusions or answers.
+
   agent: researcher
-  # human_input: True
 
-reporting_task:
-  description: >
-    Review all extracted information from research. Summarize, group, and structure the results into a comprehensive report that directly answers the question "{question}". Ensure that the report is clear, actionable, and includes source references for all key points.
-    
-    Today is {current_date}.
-  expected_output: >
-    A detailed, well-structured report answering the question, with sections for each main finding and source references for all extracted information. The report will be the same language as the question. Format as Markdown without "```".
-  agent: reporting_analyst
+write_final_output:
+  description: |
+    Based on the research below, write a full, user-friendly response to the original request.
+
+    ---
+    {user_input}
+    ---
+
+    Use the provided research to create a clean, well-written and logically structured answer or report. Be clear, concise and professional. If structure is implied, follow it. Every statement or claim must be clearly sourced: use the filename for internal knowledge, and the URL or site name for web findings. If a statement is not sourced, it must not appear in the report.
+
+  expected_output: |
+    A polished, complete written output that addresses the user's request. Every statement must include a source (filename or URL/site). Use markdown.
+
+  agent: writer
   output_file: report.md
+
+review_output:
+  description: |
+    The following text was written in response to a user request:
+
+    ---
+    {user_input}
+    ---
+
+    Review the output for structure, clarity, factual completeness and writing quality. If improvements are needed, point them out specifically. If the text is solid, approve it confidently.
+
+  expected_output: >
+    A short review with clear feedback: either approval with reasoning, or suggestions for improvement.
+
+  agent: critic

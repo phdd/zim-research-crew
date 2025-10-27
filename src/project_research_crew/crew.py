@@ -4,6 +4,7 @@ from typing import List
 
 from crewai import Agent, Crew, Process, Task
 from crewai.project import CrewBase, agent, crew, task, tool
+from crewai_tools.tools.serper_dev_tool.serper_dev_tool import SerperDevTool
 from crewai.agents.agent_builder.base_agent import BaseAgent
 from crewai.knowledge.source.string_knowledge_source import StringKnowledgeSource
 
@@ -25,31 +26,50 @@ class ProjectResearchCrew:
 
     # If you would like to add tools to your agents, you can learn more about it here:
     # https://docs.crewai.com/concepts/agents#agent-tools
+    @tool
+    def web_search(self):
+        return SerperDevTool()
+
     @agent
     def researcher(self) -> Agent:
         return Agent(
             config=self.agents_config["researcher"],  # type: ignore[index]
+            verbose=True
         )
 
     @agent
-    def reporting_analyst(self) -> Agent:
+    def writer(self) -> Agent:
         return Agent(
-            config=self.agents_config["reporting_analyst"],  # type: ignore[index]
+            config=self.agents_config["writer"],  # type: ignore[index]
+            verbose=True
+        )
+
+    @agent
+    def critic(self) -> Agent:
+        return Agent(
+            config=self.agents_config["critic"],  # type: ignore[index]
+            verbose=True
         )
 
     # To learn more about structured task outputs,
     # task dependencies, and task callbacks, check out the documentation:
     # https://docs.crewai.com/concepts/tasks#overview-of-a-task
     @task
-    def research_task(self) -> Task:
+    def research_input(self) -> Task:
         return Task(
-            config=self.tasks_config["research_task"],  # type: ignore[index]
+            config=self.tasks_config["research_input"],  # type: ignore[index]
         )
 
     @task
-    def reporting_task(self) -> Task:
+    def write_final_output(self) -> Task:
         return Task(
-            config=self.tasks_config["reporting_task"],  # type: ignore[index]
+            config=self.tasks_config["write_final_output"],  # type: ignore[index]
+        )
+
+    @task
+    def review_output(self) -> Task:
+        return Task(
+            config=self.tasks_config["review_output"],  # type: ignore[index]
         )
 
     @crew
@@ -61,10 +81,10 @@ class ProjectResearchCrew:
         return Crew(
             agents=self.agents,
             tasks=self.tasks,
-            process=Process.sequential,
             knowledge_sources=[StringKnowledgeSource(content="dummy source")],
-            planning_llm="gpt-4.1",
-            planning=False,
-            memory=True,
-            verbose=True
+            process=Process.sequential,
+            # manager_llm="gpt-4.1",
+            # planning=True,
+            # memory=True,
+            verbose=True,
         )

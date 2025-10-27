@@ -30,8 +30,8 @@ def run():
     """
     inputs = {
         "current_date": datetime.now().strftime("%Y-%m-%d"),
-        "question": os.getenv(
-            "QUESTION", "Who is sit.institute GmbH?"
+        "user_input": os.getenv(
+            "USER_INPUT", "Was macht die sit.institute GmbH?"
         ),
     }
 
