@@ -5,6 +5,7 @@ from typing import List
 from crewai import Agent, Crew, Process, Task
 from crewai.project import CrewBase, agent, crew, task, tool
 from crewai_tools.tools.serper_dev_tool.serper_dev_tool import SerperDevTool
+from crewai_tools import ScrapeWebsiteTool
 from crewai.agents.agent_builder.base_agent import BaseAgent
 from crewai.knowledge.source.string_knowledge_source import StringKnowledgeSource
 
@@ -29,6 +30,10 @@ class ProjectResearchCrew:
     @tool
     def web_search(self):
         return SerperDevTool()
+
+    @tool
+    def web_scrape(self):
+        return ScrapeWebsiteTool()
 
     @agent
     def researcher(self) -> Agent:
@@ -82,7 +87,7 @@ class ProjectResearchCrew:
             agents=self.agents,
             tasks=self.tasks,
             knowledge_sources=[StringKnowledgeSource(content="dummy source")],
-            process=Process.sequential,
+            process=Process.hierarchical,
             manager_llm="gpt-4.1",
             planning=True,
             # memory=True,
