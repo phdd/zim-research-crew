@@ -1,15 +1,18 @@
 #!/usr/bin/env python
 import os
 import sys
-from uuid import uuid4
 import warnings
+
+from uuid import uuid4
 
 from datetime import datetime
 from pathlib import Path
 
+import pandas as pd
+
 from docling.datamodel.base_models import InputFormat
 from docling.document_converter import DocumentConverter
-from docling_core.transforms.chunker.hierarchical_chunker import HierarchicalChunker
+from docling_core.transforms.chunker.hybrid_chunker import HybridChunker
 from docling.datamodel.base_models import InputFormat
 from docling.document_converter import DocumentConverter
 
@@ -125,8 +128,8 @@ def knowledge_import():
     if hasattr(sys.stderr, "reconfigure"):
         sys.stderr.reconfigure(encoding='utf-8') # type: ignore
 
-    file_path = Path(KNOWLEDGE_DIRECTORY)
-    file_paths = [str(p) for p in file_path.rglob("*") if p.is_file()]
+    knowledge_dir = Path(KNOWLEDGE_DIRECTORY)
+    file_paths = [str(p) for p in knowledge_dir.rglob("*") if p.is_file() and not p.name.startswith(".")]
 
     converter = DocumentConverter(
         allowed_formats=[
@@ -143,22 +146,33 @@ def knowledge_import():
 
     conv_results_iter = list(converter.convert_all(file_paths))
     content = [result.document for result in conv_results_iter]
-    chunker = HierarchicalChunker()
+    chunker = HybridChunker()
     chunks = []
 
     client = crew.knowledge.storage._get_client()
     client.delete_collection(collection_name="knowledge_crew")
 
-    for doc in content:
-        with open(f"./knowledge-import/{doc.name}.md", "w") as f:
-            f.write(doc.export_to_markdown())
+    tables_dir = knowledge_dir / Path("imported-tables")
 
+    if tables_dir.exists():
+        for file in tables_dir.glob("*"):
+            file.unlink()
+    else:
+        tables_dir.mkdir(parents=True, exist_ok=True)
+
+    for doc in content:
         for chunk in chunker.chunk(doc):
-            metadata = chunk.meta.origin.model_dump() # type: ignore
+            origin = chunk.meta.origin.model_dump() # type: ignore
             chunks.append({
                 "doc_id": uuid4().hex,
-                "metadata": metadata,
-                "content": f"{chunk.text}\n\nMetadata: {metadata}",
+                "metadata": origin,
+                "content": f"{chunker.contextualize(chunk)}\n\nOrigin: {origin}\n\n",
             })
+
+        # for table_ix, table in enumerate(doc.tables):
+        #     if doc.origin is not None:
+        #         table_df: pd.DataFrame = table.export_to_dataframe(doc)
+        #         element_csv_filename = tables_dir / f"{doc.origin.filename} Table {table_ix + 1}.csv"
+        #         table_df.to_csv(element_csv_filename)
 
     client.add_documents(collection_name="knowledge_crew", documents=chunks)
