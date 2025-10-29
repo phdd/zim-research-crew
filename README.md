@@ -16,16 +16,15 @@ Welcome to the Project, powered by [crewAI](https://crewai.com). This template i
       ```
 3. Import your knowledge documents from the `knowledge/` folder:
       ```bash
-      uv run crew.py import-knowledge
+      uv run main.py import-knowledge
       ```
-4. Run the crew with your input:
+4. Run the crew with example input
       ```bash
-      uv run crew.py kickoff --user-input "Was macht die sit.institute GmbH?"
-      # or with a file:
-      uv run crew.py kickoff --user-input-file ./report-toc.md
+      cp user-input.example.md user-input.md
+      uv run main.py kickoff
       ```
 
-This will run and create a `report.md` file with the output of a research on LLMs in the root folder.
+This will run and create a `workspace/report.md` file with the output of your research in the root folder.
 
 ## Crew
 
@@ -49,10 +48,10 @@ This command provides options to clear the stored memories of your crew agents.
 
 ### Customizing
 
-- Modify `src/project_research_crew/config/agents.yaml` to define your agents
-- Modify `src/project_research_crew/config/tasks.yaml` to define your tasks
-- Modify `src/project_research_crew/crew.py` to add your own logic, tools and specific args
-- Modify `src/project_research_crew/main.py` to add custom inputs for your agents and tasks
+- Modify `crew/config/agents.yaml` to define your agents
+- Modify `crew/config/tasks.yaml` to define your tasks
+- Modify `crew/crew.py` to add your own logic, tools and specific args
+- Modify `main.py` to add custom inputs for your agents and tasks
 
 ### Understanding Your Crew
 

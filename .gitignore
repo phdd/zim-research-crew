@@ -5,5 +5,5 @@ __pycache__/
 knowledge/*
 !knowledge/.gitkeep
 
-files/*
-!files/input.md
+workspace/*
+user-input.md

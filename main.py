@@ -13,27 +13,23 @@ from docling_core.transforms.chunker.hybrid_chunker import HybridChunker
 
 from crewai.utilities.constants import KNOWLEDGE_DIRECTORY
 
-from project_research_crew.crew import ProjectResearchCrew
+from crew.crew import ProjectResearchCrew
+
+if not Path("user-input.md").exists():
+    Path("user-input.md").write_text(Path("user-input.example.md").read_text(encoding='utf-8'), encoding='utf-8')
 
 @click.command()
-@click.option('--user-input', type=str, help='User input string.')
-@click.option('--user-input-file', type=click.Path(exists=True), help='Path to file containing user input.')
-def kickoff(user_input, user_input_file):
+def kickoff():
     """
-    Run the crew with with user input.
+    Run the crew.
     """
-    if bool(user_input) == bool(user_input_file):
-        raise click.UsageError('You must provide exactly one of --user-input or --user-input-file.')
 
-    if user_input:
-        input_value = user_input
-    else:
-        with open(user_input_file, encoding='utf-8') as f:
-            input_value = f.read().strip()
+    with open(Path("user-input.md"), encoding='utf-8') as f:
+        user_input = f.read().strip()
 
     ProjectResearchCrew().crew().kickoff(inputs={
         "current_date": datetime.now().strftime("%Y-%m-%d"),
-        "user_input": input_value,
+        "user_input": user_input,
     })
 
 @click.command()
