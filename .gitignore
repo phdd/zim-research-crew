@@ -1,12 +1,9 @@
 .env
 __pycache__/
 .DS_Store
-.files
 
 knowledge/*
 !knowledge/.gitkeep
-knowledge-import/*
-!knowledge_import/.gitkeep
 
-report.md
-input.md
+files/*
+!files/input.md
