@@ -11,9 +11,5 @@ dependencies = [
     "qdrant-client>=1.15.1",
 ]
 
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
-
 [tool.crewai]
 type = "crew"

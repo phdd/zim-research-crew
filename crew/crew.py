@@ -4,8 +4,7 @@ from typing import List
 
 from crewai import Agent, Crew, Process, Task
 from crewai.project import CrewBase, agent, crew, task, tool
-from crewai_tools.tools.serper_dev_tool.serper_dev_tool import SerperDevTool
-from crewai_tools import ScrapeWebsiteTool
+from crewai_tools import ScrapeWebsiteTool, SerperDevTool, FileReadTool, FileWriterTool
 from crewai.agents.agent_builder.base_agent import BaseAgent
 from crewai.knowledge.source.string_knowledge_source import StringKnowledgeSource
 
@@ -35,13 +34,21 @@ class ProjectResearchCrew:
     def web_scrape(self):
         return ScrapeWebsiteTool()
 
+    @tool
+    def read_file(self):
+        return FileReadTool()
+    
+    @tool
+    def write_file(self):
+        return FileWriterTool()
+
     @agent
     def researcher(self) -> Agent:
         return Agent(
             config=self.agents_config["researcher"],  # type: ignore[index]
             verbose=True
         )
-
+    
     @agent
     def writer(self) -> Agent:
         return Agent(
@@ -60,21 +67,21 @@ class ProjectResearchCrew:
     # task dependencies, and task callbacks, check out the documentation:
     # https://docs.crewai.com/concepts/tasks#overview-of-a-task
     @task
-    def research_input(self) -> Task:
+    def research(self) -> Task:
         return Task(
-            config=self.tasks_config["research_input"],  # type: ignore[index]
+            config=self.tasks_config["research"],  # type: ignore[index]
         )
 
     @task
-    def write_final_output(self) -> Task:
+    def write_report(self) -> Task:
         return Task(
-            config=self.tasks_config["write_final_output"],  # type: ignore[index]
+            config=self.tasks_config["write_report"],  # type: ignore[index]
         )
 
     @task
-    def review_output(self) -> Task:
+    def review_report(self) -> Task:
         return Task(
-            config=self.tasks_config["review_output"],  # type: ignore[index]
+            config=self.tasks_config["review_report"],  # type: ignore[index]
         )
 
     @crew
@@ -90,6 +97,6 @@ class ProjectResearchCrew:
             process=Process.hierarchical,
             manager_llm="gpt-4.1",
             planning=True,
-            # memory=True,
+            memory=True,
             verbose=True,
         )
