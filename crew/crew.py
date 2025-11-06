@@ -94,9 +94,9 @@ class ProjectResearchCrew:
             agents=self.agents,
             tasks=self.tasks,
             knowledge_sources=[StringKnowledgeSource(content="dummy source")],
-            process=Process.hierarchical,
-            manager_llm="gpt-4.1",
-            planning=True,
-            memory=True,
+            # process=Process.hierarchical,
+            # manager_llm="gpt-4.1",
+            # planning=True,
+            # memory=True,
             verbose=True,
         )
