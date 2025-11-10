@@ -88,10 +88,15 @@ def import_knowledge():
         result = []
 
         for chunk in doc_chunks:
-            result.append({
+            result.append(            {
                 "doc_id": uuid4().hex,
-                "metadata": getattr(chunk, 'metadata', getattr(chunk, 'meta', {})),
-                "content": getattr(chunk, 'content', str(chunk)),
+                "content": chunk.content,
+                "metadata": {
+                    "chunk_index": chunk.index,
+                    "start_char": chunk.start_char,
+                    "end_char": chunk.end_char,
+                    **chunk.metadata
+                },
             })
         
         return result
