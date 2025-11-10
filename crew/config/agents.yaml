@@ -8,8 +8,8 @@ researcher:
   tools:
     - web_search
     - web_scrape
-  reasoning: True
-  max_reasoning_attempts: 5
+  # reasoning: True
+  # max_reasoning_attempts: 5
 
 writer:
   role: >
@@ -20,8 +20,8 @@ writer:
     You are Jonas Fischer, a seasoned corporate writer who knows how to turn raw insights into useful narratives. You’ve supported executives, product teams and HR with messaging that lands — and now you help distill complex topics into easy-to-digest communication.
   tools:
     - write_file
-  reasoning: True
-  max_reasoning_attempts: 5
+  # reasoning: True
+  # max_reasoning_attempts: 5
 
 critic:
   role: >
@@ -32,5 +32,5 @@ critic:
     You are Ayse Taner, a former compliance editor and documentation lead at a large international firm. Your job is to ensure that everything that leaves the team is clean, useful, and up to professional standards.
   tools:
     - read_file
-  reasoning: True
-  max_reasoning_attempts: 5
+  # reasoning: True
+  # max_reasoning_attempts: 5
