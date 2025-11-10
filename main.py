@@ -1,19 +1,15 @@
 #!.venv/bin/python
-import click
 import sys
-
+import asyncio
 from datetime import datetime
 from pathlib import Path
 from uuid import uuid4
-
 import click
-
 from docling.document_converter import DocumentConverter
 from docling_core.transforms.chunker.hybrid_chunker import HybridChunker
-
 from crewai.utilities.constants import KNOWLEDGE_DIRECTORY
-
 from crew.crew import ProjectResearchCrew
+from crew.utils.chunker import create_chunker, ChunkingConfig
 
 if not Path("user-input.md").exists():
     Path("user-input.md").write_text(Path("user-input.example.md").read_text(encoding='utf-8'), encoding='utf-8')
@@ -73,23 +69,39 @@ def import_knowledge():
         return
 
     conv_results_iter = list(converter.convert_all(valid_files))
-
     content = [result.document for result in conv_results_iter]
-    chunker = HybridChunker()
-    chunks = []
 
+    chunker = create_chunker(ChunkingConfig())
     client = crew.knowledge.storage._get_client()
     client.delete_collection(collection_name="knowledge_crew")
+    chunks = []
 
-    for doc in content:
-        for chunk in chunker.chunk(doc):
-            origin = chunk.meta.origin.model_dump() # type: ignore
-            chunks.append({
+    async def process_document(doc):
+        doc_chunks = await chunker.chunk_document(
+            doc.export_to_markdown(),
+            doc.name,
+            doc.origin.filename,
+            doc.origin.model_dump(),
+            doc, # type: ignore
+        )
+        
+        result = []
+
+        for chunk in doc_chunks:
+            result.append({
                 "doc_id": uuid4().hex,
-                "metadata": origin,
-                "content": f"{chunker.contextualize(chunk)}\n\nOrigin: {origin}\n\n",
+                "metadata": getattr(chunk, 'metadata', getattr(chunk, 'meta', {})),
+                "content": getattr(chunk, 'content', str(chunk)),
             })
+        
+        return result
 
+    async def main():
+        results = await asyncio.gather(*(process_document(doc) for doc in content))
+        for doc_chunks in results:
+            chunks.extend(doc_chunks)
+
+    asyncio.run(main())
     client.add_documents(collection_name="knowledge_crew", documents=chunks)
 
 
