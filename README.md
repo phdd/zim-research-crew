@@ -66,3 +66,12 @@ For support, questions, or feedback regarding the Crew or crewAI.
 - [Chat with our docs](https://chatg.pt/DWjSBZn)
 
 Let's create wonders together with the power and simplicity of crewAI.
+
+## Roadmap
+
+- [ ] add confluence as rag source
+- [ ] add task to summarize the documents
+  - use first 500 chars of each doc
+  - infer contents write mardown file overview
+- [ ] improve retrieval recall (long lists, pagination? strategy/methods?) 
+- [ ] add indexed chunk retrieval (get chunk surroundings for more context)
