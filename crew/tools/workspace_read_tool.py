@@ -9,7 +9,7 @@ class WorkspaceFileReadToolInput(BaseModel):
 class WorkspaceFileReadTool(BaseTool):
     name: str = "Workspace File Read Tool"
     description: str = (
-        "A tool to read content from a specified file in the ./workspace directory. "
+        "A tool to read content from a specified file. "
         "Accepts filename as input."
     )
     args_schema: type[BaseModel] = WorkspaceFileReadToolInput

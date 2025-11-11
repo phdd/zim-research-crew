@@ -10,7 +10,7 @@ class WorkspaceFileWriterToolInput(BaseModel):
 class WorkspaceFileWriterTool(BaseTool):
     name: str = "Workspace File Writer Tool"
     description: str = (
-        "A tool to write text content to a specified file in the workspace directory. "
+        "A tool to write text content to a specified file. "
         "Always overwrites existing files. "
         "Accepts filename and content as input. "
         "Only plain text content is supported. Do not use for binary or non-text files."
