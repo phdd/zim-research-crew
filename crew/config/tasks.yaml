@@ -6,10 +6,12 @@ research:
     {user_input}
     ---
 
-    Your job is to research relevant facts, insights and data — using both internal knowledge and web search. Organize your findings clearly. Use bullet points grouped by topic, theme, or aspect. For every finding that comes from the internal knowledge base, you must always cite the filename as the source (the filename is always available in the metadata). If a finding comes from the web, cite the URL or site name. Do not write full answers or explanations — just provide factual, structured findings.
+    Your job is to research relevant facts, insights and data — using internal documents and web search. Organize your findings clearly. Use bullet points grouped by topic, theme, or aspect. For every finding that comes from the internal documents, you must always cite the filename as the source (the filename is always available in the metadata). If a finding comes from the web, cite the full URL. Do not write full answers or explanations — just provide factual, structured findings.
+
+    Every source starting with "http://"" or "https://" should be read with the web_scrape tool.
 
   expected_output: |
-    A clean and structured list of research notes. Use bullet points, grouped by topic. Every bullet point must include a source: the filename (for internal knowledge) or the URL/site (for web search). Do not write conclusions or answers.
+    You will write clean and structured notes. Use bullet points, grouped by topic. Every bullet point must include a source: the filename (for internal knowledge) or the URL/site (for web search). Do not write conclusions or answers. Use markdown without "```" and write the result to `research.md`. If you are done, say "Research complete"
 
   agent: researcher
 
@@ -21,12 +23,15 @@ write_report:
     {user_input}
     ---
 
-    Use the provided research to create a clean, well-written and logically structured answer or report. Be clear, concise and professional. If structure is implied, follow it. Every statement or claim must be clearly sourced: use the filename for internal knowledge, and the URL or site name for web findings. If a statement is not sourced, it must not appear in the report.
+    Use the provided research from `research.md` to create a clean, well-written and logically structured answer or report. Be clear, concise and professional. If structure is implied, follow it. Every statement or claim must be clearly sourced: use the filename for internal documents, and the full URL for web findings. If a statement is not sourced, it must not appear in the report.
 
   expected_output: |
-    A polished, complete written report that addresses the user's request. Every statement must include a source (filename or URL/site). Use markdown without "```" and write the result to `workspace/report.md`.
+    A polished, complete written report that addresses the user's request. Every statement must include a source (filename or URL). Use markdown without "```" and write the result to `report.md`. Do not use horizontal lines (---) anywhere in the report. If you are done, say "Report complete".
 
   agent: writer
+
+  context:
+    - research
 
 review_report:
   description: |
@@ -36,10 +41,24 @@ review_report:
     {user_input}
     ---
 
-    Review the report (`workspace/report.md`) for structure, clarity, factual completeness, writing quality, and especially for correct and complete source citations. Every statement must have a source (filename for internal knowledge, URL/site for web). If improvements are needed, point them out specifically. If the text is solid, approve it confidently.
+    Review the report (`report.md`) for structure, clarity, factual completeness, writing quality, and especially for correct and complete source citations. Every statement must have a source (filename for internal knowledge, URL/site for web). If improvements are needed, point them out specifically. If the text is solid, approve it confidently.
 
   expected_output: >
-    A short review with clear feedback: either approval with reasoning, or suggestions for improvement. Explicitly mention if source citations are missing or incorrect.
+    Either "approved" or "changes_requested" with a list of specific points to fix.
 
   agent: critic
-  llm: gpt-4.1
+
+  context:
+    - write_report
+
+improve_report:
+  description: |
+    The report (`report.md`) has been reviewed and needs improvements. Improve the report according to the reviewer's feedback. Address every point raised, especially regarding structure, clarity, completeness, writing quality, and source citations. Ensure every statement has a correct source (filename for internal knowledge, URL/site for web). If the report is now solid, say "Report complete".
+
+  expected_output: >
+    An improved version of the report that addresses all reviewer feedback. Use markdown without "```" and write the result to `report.md`. If you are done, say "Report complete".
+
+  agent: writer
+  context:
+    - write_report
+    - review_report

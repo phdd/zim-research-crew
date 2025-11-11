@@ -1,12 +1,15 @@
 #!.venv/bin/python
 import sys
 import asyncio
+
 from datetime import datetime
 from pathlib import Path
 from uuid import uuid4
+
 import click
+
+from crewai.rag.config.utils import get_rag_client
 from docling.document_converter import DocumentConverter
-from docling_core.transforms.chunker.hybrid_chunker import HybridChunker
 from crewai.utilities.constants import KNOWLEDGE_DIRECTORY
 from crew.crew import ProjectResearchCrew
 from crew.utils.chunker import create_chunker, ChunkingConfig
@@ -33,11 +36,6 @@ def import_knowledge():
     """
     Consume knowledge into the crew's knowledge storage.
     """
-    crew = ProjectResearchCrew().crew()
-
-    assert crew.knowledge is not None
-    assert crew.knowledge.storage is not None
-
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding='utf-8') # type: ignore
     if hasattr(sys.stderr, "reconfigure"):
@@ -71,9 +69,10 @@ def import_knowledge():
     conv_results_iter = list(converter.convert_all(valid_files))
     content = [result.document for result in conv_results_iter]
 
+    client = get_rag_client()
+    client.delete_collection(collection_name="knowledge")
+
     chunker = create_chunker(ChunkingConfig())
-    client = crew.knowledge.storage._get_client()
-    client.delete_collection(collection_name="knowledge_crew")
     chunks = []
 
     async def process_document(doc):
@@ -107,7 +106,7 @@ def import_knowledge():
             chunks.extend(doc_chunks)
 
     asyncio.run(main())
-    client.add_documents(collection_name="knowledge_crew", documents=chunks)
+    client.add_documents(collection_name="knowledge", documents=chunks)
 
 
 @click.group()

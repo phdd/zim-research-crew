@@ -9,6 +9,7 @@ dependencies = [
     "crewai[tools]==1.1.0",
     "docling>=2.58.0",
     "qdrant-client>=1.15.1",
+    "sentence-transformers>=5.1.2",
 ]
 
 [tool.crewai]

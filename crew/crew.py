@@ -1,17 +1,23 @@
 import os
 
-from typing import List
+from typing import List, Literal
 
 from crewai import Agent, Crew, Process, Task
 from crewai.project import CrewBase, agent, crew, task, tool
-from crewai_tools import ScrapeWebsiteTool, SerperDevTool, FileReadTool, FileWriterTool
+from crewai_tools import ScrapeWebsiteTool, SerperDevTool
 from crewai.agents.agent_builder.base_agent import BaseAgent
-from crewai.knowledge.source.string_knowledge_source import StringKnowledgeSource
+from pydantic import BaseModel
+from crew.tools import DocumentSearchTool, WorkspaceFileWriterTool, WorkspaceFileReadTool
+from crewai.tasks.conditional_task import ConditionalTask
+from crewai.tasks.task_output import TaskOutput
 
 # If you want to run a snippet of code before or after the crew starts,
 # you can use the @before_kickoff and @after_kickoff decorators
 # https://docs.crewai.com/concepts/crews#example-crew-class-with-decorators
 
+class ReviewOutput(BaseModel):
+    result: Literal["approved", "changes_requested"]
+    requested_changes: List[str]
 
 @CrewBase
 class ProjectResearchCrew:
@@ -26,6 +32,11 @@ class ProjectResearchCrew:
 
     # If you would like to add tools to your agents, you can learn more about it here:
     # https://docs.crewai.com/concepts/agents#agent-tools
+    
+    @tool
+    def document_search(self):
+        return DocumentSearchTool()
+
     @tool
     def web_search(self):
         return SerperDevTool()
@@ -36,11 +47,11 @@ class ProjectResearchCrew:
 
     @tool
     def read_file(self):
-        return FileReadTool()
+        return WorkspaceFileReadTool()
     
     @tool
     def write_file(self):
-        return FileWriterTool()
+        return WorkspaceFileWriterTool()
 
     @agent
     def researcher(self) -> Agent:
@@ -82,6 +93,17 @@ class ProjectResearchCrew:
     def review_report(self) -> Task:
         return Task(
             config=self.tasks_config["review_report"],  # type: ignore[index]
+            output_pydantic=ReviewOutput,
+        )
+    
+    @task
+    def improve_report(self) -> ConditionalTask:
+        def changes_requested(output: TaskOutput) -> bool:
+            return output.pydantic.result == "changes_requested" # type: ignore
+
+        return ConditionalTask(
+            config=self.tasks_config["improve_report"],  # type: ignore[index]
+            condition=changes_requested
         )
 
     @crew
@@ -93,7 +115,6 @@ class ProjectResearchCrew:
         return Crew(
             agents=self.agents,
             tasks=self.tasks,
-            knowledge_sources=[StringKnowledgeSource(content="dummy source")],
             # process=Process.hierarchical,
             # manager_llm="gpt-4.1",
             # planning=True,
