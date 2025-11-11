@@ -75,3 +75,4 @@ Let's create wonders together with the power and simplicity of crewAI.
   - infer contents write mardown file overview
 - [ ] improve retrieval recall (long lists, pagination? strategy/methods?) 
 - [ ] add indexed chunk retrieval (get chunk surroundings for more context)
+- [ ] user-input from file, not from task description 
