@@ -166,6 +166,12 @@ class DoclingHybridChunker:
                     "has_context": True  # Flag indicating contextualized chunk
                 }
 
+                # chunk.meta.doc_items[0].prov[0].page_no
+                if getattr(chunk.meta, 'doc_items', None):
+                    first_item = chunk.meta.doc_items[0] # type: ignore
+                    if first_item.prov and hasattr(first_item.prov[0], 'page_no'):
+                        chunk_metadata["page_no"] = first_item.prov[0].page_no
+
                 # Estimate character positions
                 start_char = current_pos
                 end_char = start_char + len(contextualized_text)

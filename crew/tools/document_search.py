@@ -70,12 +70,13 @@ class DocumentSearchTool(BaseTool):
         """Format the reranked results, using all available metadata."""
         return "".join([
             dedent("""
-                   # File "{filename}" / Chunk #{chunk_index} (score={score:.4f})
+                   # Chunk index {chunk_index} in "{filename}" on page {page_no} (score={score:.2f})
 
                    {content}
             """).format(
-                filename=result.get('metadata', {}).get('filename', 'unknown'),
                 chunk_index=result.get('metadata', {}).get('chunk_index', 'unknown'),
+                filename=result.get('metadata', {}).get('filename', 'unknown'),
+                page_no=result.get('metadata', {}).get('page_no', 'unknown'),
                 score=result.get('score', 0.0),
                 content=result.get('content', '')
             ) for result in results
