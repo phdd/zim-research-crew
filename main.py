@@ -6,6 +6,7 @@ from datetime import datetime
 from pathlib import Path
 from uuid import uuid4
 
+import logging
 import click
 
 from crewai.rag.config.utils import get_rag_client
@@ -13,6 +14,8 @@ from docling.document_converter import DocumentConverter
 from crewai.utilities.constants import KNOWLEDGE_DIRECTORY
 from crew.crew import ProjectResearchCrew
 from crew.utils.chunker import create_chunker, ChunkingConfig
+
+logger = logging.getLogger(__name__)
 
 if not Path("user-input.md").exists():
     Path("user-input.md").write_text(Path("user-input.example.md").read_text(encoding='utf-8'), encoding='utf-8')
@@ -70,7 +73,11 @@ def import_knowledge():
     content = [result.document for result in conv_results_iter]
 
     client = get_rag_client()
-    client.delete_collection(collection_name="knowledge")
+    
+    try:
+        client.delete_collection(collection_name="knowledge")
+    except Exception as e:
+        logger.debug(f"Collection deletion failed: {e}")
 
     chunker = create_chunker(ChunkingConfig())
     chunks = []
