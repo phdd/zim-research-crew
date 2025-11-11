@@ -2,14 +2,22 @@ import os
 
 from typing import List, Literal
 
+from pydantic import BaseModel
+from mcp import StdioServerParameters
+
 from crewai import Agent, Crew, Process, Task
 from crewai.project import CrewBase, agent, crew, task, tool
-from crewai_tools import ScrapeWebsiteTool, SerperDevTool
 from crewai.agents.agent_builder.base_agent import BaseAgent
-from pydantic import BaseModel
-from crew.tools import DocumentSearchTool, WorkspaceFileWriterTool, WorkspaceFileReadTool
 from crewai.tasks.conditional_task import ConditionalTask
 from crewai.tasks.task_output import TaskOutput
+
+from crewai_tools import ScrapeWebsiteTool, SerperDevTool
+
+from crew.tools import (
+    DocumentSearchTool,
+    WorkspaceFileWriterTool,
+    WorkspaceFileReadTool
+)
 
 # If you want to run a snippet of code before or after the crew starts,
 # you can use the @before_kickoff and @after_kickoff decorators
@@ -25,6 +33,12 @@ class ProjectResearchCrew:
 
     agents: List[BaseAgent]
     tasks: List[Task]
+
+    mcp_server_params = [StdioServerParameters(
+        command="uvx",
+        # https://github.com/sooperset/mcp-atlassian/issues/721#issuecomment-3405125937
+        args=["--with", "pydantic<2.12", "mcp-atlassian", "--env-file=.env", "--read-only"],
+    )]
 
     # Learn more about YAML configuration files here:
     # Agents: https://docs.crewai.com/concepts/agents#yaml-configuration-recommended
@@ -54,33 +68,56 @@ class ProjectResearchCrew:
         return WorkspaceFileWriterTool()
 
     @agent
-    def researcher(self) -> Agent:
+    def atlassian_knowledge_manager(self):
+        agent = Agent(
+            config=self.agents_config["atlassian_knowledge_manager"],  # type: ignore[index]
+            verbose=True
+        )
+
+        agent.tools += self.get_mcp_tools()  # type: ignore
+        return agent
+    
+    @agent
+    def document_knowledge_manager(self) -> Agent:
         return Agent(
-            config=self.agents_config["researcher"],  # type: ignore[index]
+            config=self.agents_config["document_knowledge_manager"],  # type: ignore[index]
             verbose=True
         )
     
     @agent
-    def writer(self) -> Agent:
+    def corporate_communications_specialist(self) -> Agent:
         return Agent(
-            config=self.agents_config["writer"],  # type: ignore[index]
+            config=self.agents_config["corporate_communications_specialist"],  # type: ignore[index]
             verbose=True
         )
 
     @agent
-    def critic(self) -> Agent:
+    def critical_reviewer(self) -> Agent:
         return Agent(
-            config=self.agents_config["critic"],  # type: ignore[index]
+            config=self.agents_config["critical_reviewer"],  # type: ignore[index]
             verbose=True
         )
 
     # To learn more about structured task outputs,
     # task dependencies, and task callbacks, check out the documentation:
     # https://docs.crewai.com/concepts/tasks#overview-of-a-task
+    
     @task
-    def research(self) -> Task:
+    def confluence_research(self) -> Task:
         return Task(
-            config=self.tasks_config["research"],  # type: ignore[index]
+            config=self.tasks_config["confluence_research"],  # type: ignore[index]
+        )
+    
+    @task
+    def jira_research(self) -> Task:
+        return Task(
+            config=self.tasks_config["jira_research"],  # type: ignore[index]
+        )
+    
+    @task
+    def document_research(self) -> Task:
+        return Task(
+            config=self.tasks_config["document_research"],  # type: ignore[index]
         )
 
     @task

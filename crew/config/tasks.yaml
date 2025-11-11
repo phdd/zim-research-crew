@@ -1,37 +1,92 @@
-research:
+confluence_research:
   description: |
-    The user submitted the following request:
+    You are tasked with researching the following user request:
 
     ---
     {user_input}
     ---
 
-    Your job is to research relevant facts, insights and data — using internal documents and web search. Organize your findings clearly. Use bullet points grouped by topic, theme, or aspect. For every finding that comes from the internal documents, you must always cite the filename as the source (the filename is always available in the metadata). If a finding comes from the web, cite the full URL. Do not write full answers or explanations — just provide factual, structured findings.
+    1. Extract relevant facts, insights and data from the Confluence documents. Organize your findings clearly. Use bullet points grouped by topic, theme, or aspect. For every finding, cite the URL as the source.
+    2. Write your findings to the file `research/confluence.md` (tool write_file).
 
-    Every source starting with "http://"" or "https://" should be read with the web_scrape tool.
+    Important: Do not write full answers or explanations — just provide factual, structured findings.
+
+    ---
+    confluence_available: {confluence_available}
 
   expected_output: |
-    You will write clean and structured notes. Use bullet points, grouped by topic. Every bullet point must include a source: the filename (for internal knowledge) or the URL/site (for web search). Do not write conclusions or answers. Use markdown without "```" and write the result to `research.md`. If you are done, say "Research complete"
+    If confluence is not available, say "Confluence access not configured."
+    If you are done researching , say "Findings written to `research/confluence.md`".
 
-  agent: researcher
+  agent: atlassian_knowledge_manager
+
+jira_research:
+  description: |
+    You are tasked with researching the following user request:
+
+    ---
+    {user_input}
+    ---
+
+    1. Extract relevant Jira resources. Organize your findings clearly. Use bullet points grouped by topic, theme, or aspect. For every finding, cite the URL as the source.
+    2. Write your findings to the file `research/jira.md` (tool write_file).
+
+    Important:
+    - Do not write full answers or explanations — just provide factual, structured findings.
+    - Issue-URLs are API-based URLs (e.g., {jira_url}/rest/api/2/issue/<id>) but the user-facing URLs are different (e.g., {jira_url}/browse/<key>). Make sure to convert API URLs to user-facing URLs when citing sources.
+
+    ---
+    jira_available: {jira_available}
+
+  expected_output: |
+    If jira is not available, say "Jira access not configured"
+    If you are done, say "Findings written to `research/jira.md`".
+
+  agent: atlassian_knowledge_manager
+
+document_research:
+  description: |
+    You are tasked with researching the following user request:
+
+    ---
+    {user_input}
+    ---
+
+    1. Extract relevant facts, insights and data from internal documents. Organize your findings clearly. Use bullet points grouped by topic, theme, or aspect. For every finding, cite the filename as the source.
+    2. Write your findings to the file `research/documents.md` (tool write_file).
+
+    Important: Do not write full answers or explanations — just provide factual, structured findings.
+
+  expected_output: |
+    If you are done, say "Findings written to `research/documents.md`".
+
+  agent: document_knowledge_manager
+
+  context:
+    - confluence_research
+    - jira_research
 
 write_report:
   description: |
-    Based on the research below, write a full, user-friendly response to the original request.
+    Based on research, write a full, user-friendly response to the original request.
 
     ---
     {user_input}
     ---
 
-    Use the provided research from `research.md` to create a clean, well-written and logically structured answer or report. Be clear, concise and professional. If structure is implied, follow it. Every statement or claim must be clearly sourced: use the filename for internal documents, and the full URL for web findings. If a statement is not sourced, it must not appear in the report.
+    Use the provided research results from `research/` to create a clean, well-written and logically structured answer or report. Be clear, concise and professional. If structure is implied, follow it. Every statement or claim must be clearly sourced: use the filename for internal documents, and the full URL for linked findings. If a statement is not sourced, it must not appear in the report.
+
+    Important: Files from `research/` should not directly be cited.
 
   expected_output: |
-    A polished, complete written report that addresses the user's request. Every statement must include a source (filename or URL). Use markdown without "```" and write the result to `report.md`. Do not use horizontal lines (---) anywhere in the report. If you are done, say "Report complete".
+    A report that addresses the user's request. Use markdown without "```" and write the result to `report.md`. Do not use horizontal lines (---) anywhere in the report. If you are done, say "Report written to `report.md`".
 
-  agent: writer
+  agent: corporate_communications_specialist
 
   context:
-    - research
+    - jira_research
+    - confluence_research
+    - document_research
 
 review_report:
   description: |
@@ -41,24 +96,27 @@ review_report:
     {user_input}
     ---
 
-    Review the report (`report.md`) for structure, clarity, factual completeness, writing quality, and especially for correct and complete source citations. Every statement must have a source (filename for internal knowledge, URL/site for web). If improvements are needed, point them out specifically. If the text is solid, approve it confidently.
+    Review the report (`report.md`) for structure, clarity, factual completeness, writing quality, and especially for correct and complete source citations. Every statement must have a source (filename for internal knowledge, URL for links). If improvements are needed, point them out specifically. If the text is solid, approve it confidently.
 
   expected_output: >
     Either "approved" or "changes_requested" with a list of specific points to fix.
 
-  agent: critic
+  agent: critical_reviewer
 
   context:
     - write_report
 
 improve_report:
   description: |
-    The report (`report.md`) has been reviewed and needs improvements. Improve the report according to the reviewer's feedback. Address every point raised, especially regarding structure, clarity, completeness, writing quality, and source citations. Ensure every statement has a correct source (filename for internal knowledge, URL/site for web). If the report is now solid, say "Report complete".
+    The report (`report.md`) has been reviewed and needs improvements. Improve the report according to the reviewer's feedback. Address every point raised, especially regarding structure, clarity, completeness, writing quality, and source citations. Write a polished, final version that meets all criteria to `report.md`.
+
+    Use markdown without "```" and write the result to `report.md`. Do not use horizontal lines (---) anywhere in the report.
 
   expected_output: >
-    An improved version of the report that addresses all reviewer feedback. Use markdown without "```" and write the result to `report.md`. If you are done, say "Report complete".
+    An improved report that addresses the user's request. Use markdown without "```" and write the result to `report.md`. Do not use horizontal lines (---) anywhere in the report. If you are done, say "Improved Report written to `report.md`".
 
-  agent: writer
+  agent: corporate_communications_specialist
+
   context:
     - write_report
     - review_report

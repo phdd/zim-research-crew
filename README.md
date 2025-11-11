@@ -12,13 +12,18 @@ Welcome to the Project, powered by [crewAI](https://crewai.com). This template i
 2. Copy the example environment file and add your OpenAI key:
       ```bash
       cp .env.example .env
-      # Edit .env and enter your OPENAI_API_KEY and SERPER_API_KEY
+      # Edit .env and enter your OPENAI_API_KEY, SERPER_API_KEY etc.
       ```
-3. Import your knowledge documents from the `knowledge/` folder:
+
+3. Generate Atlassian token:
+   - Visit [Atlassian API Tokens](https://id.atlassian.com/manage-profile/security/api-tokens) and create a classic token without scope.
+   - Add the generated token to your `.env` file as `CONFLUENCE_API_TOKEN` and `JIRA_API_TOKEN`.
+
+4. Import your knowledge documents from the `knowledge/` folder:
       ```bash
       uv run main.py import-knowledge
       ```
-4. Run the crew with example input
+5. Run the crew with example input
       ```bash
       cp user-input.example.md user-input.md
       uv run main.py kickoff

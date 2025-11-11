@@ -1,4 +1,5 @@
 #!.venv/bin/python
+import os
 import sys
 import asyncio
 
@@ -30,8 +31,11 @@ def kickoff():
         user_input = f.read().strip()
 
     ProjectResearchCrew().crew().kickoff(inputs={
-        "current_date": datetime.now().strftime("%Y-%m-%d"),
         "user_input": user_input,
+        "jira_url": os.getenv("JIRA_URL", ""),
+        "jira_available": bool(os.getenv("JIRA_API_TOKEN", "")),
+        "confluence_available": bool(os.getenv("CONFLUENCE_API_TOKEN", "")),
+        "current_date": datetime.now().strftime("%Y-%m-%d"),
     })
 
 @click.command()
@@ -73,7 +77,7 @@ def import_knowledge():
     content = [result.document for result in conv_results_iter]
 
     client = get_rag_client()
-    
+
     try:
         client.delete_collection(collection_name="knowledge")
     except Exception as e:
