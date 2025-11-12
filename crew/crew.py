@@ -1,5 +1,3 @@
-import os
-
 from typing import List, Literal
 
 from pydantic import BaseModel
@@ -11,12 +9,10 @@ from crewai.agents.agent_builder.base_agent import BaseAgent
 from crewai.tasks.conditional_task import ConditionalTask
 from crewai.tasks.task_output import TaskOutput
 
-from crewai_tools import ScrapeWebsiteTool, SerperDevTool
-
 from crew.tools import (
     DocumentSearchTool,
     WorkspaceFileWriterTool,
-    WorkspaceFileReadTool
+    WorkspaceFileReadTool,
 )
 
 # If you want to run a snippet of code before or after the crew starts,
@@ -40,6 +36,29 @@ class ProjectResearchCrew:
         args=["--with", "pydantic<2.12", "mcp-atlassian", "--env-file=.env", "--read-only"],
     )]
 
+    @staticmethod
+    def with_mcp_tools(task_method):
+        """
+        Decorator to add the appropriate MCP tools from the configuration to the task.
+        Task-specific tools do not work with decorators when using MCP. Therefore, 
+        they must be defined in a separate configuration field and injected at runtime.
+        """
+        def wrapper(self, *args, **kwargs):
+            # Call the original method to get the Task
+            task = task_method(self, *args, **kwargs)
+
+            # Determine the config name from the method name
+            config_name = task_method.__name__
+            config = self.tasks_config[config_name]
+            all_mcp_tools = self.get_mcp_tools()  # type: ignore
+            task_mcp_tools = [t for t in all_mcp_tools if t.name in config["mcp_tools"]]
+            tools = task.tools if isinstance(task.tools, list) else []
+            task.tools = tools + list(task_mcp_tools)
+
+            return task
+
+        return wrapper
+
     # Learn more about YAML configuration files here:
     # Agents: https://docs.crewai.com/concepts/agents#yaml-configuration-recommended
     # Tasks: https://docs.crewai.com/concepts/tasks#yaml-configuration-recommended
@@ -52,14 +71,6 @@ class ProjectResearchCrew:
         return DocumentSearchTool()
 
     @tool
-    def web_search(self):
-        return SerperDevTool()
-
-    @tool
-    def web_scrape(self):
-        return ScrapeWebsiteTool()
-
-    @tool
     def read_file(self):
         return WorkspaceFileReadTool()
     
@@ -69,13 +80,10 @@ class ProjectResearchCrew:
 
     @agent
     def atlassian_knowledge_manager(self):
-        agent = Agent(
+        return Agent(
             config=self.agents_config["atlassian_knowledge_manager"],  # type: ignore[index]
             verbose=True
         )
-
-        agent.tools += self.get_mcp_tools()  # type: ignore
-        return agent
     
     @agent
     def document_knowledge_manager(self) -> Agent:
@@ -103,12 +111,14 @@ class ProjectResearchCrew:
     # https://docs.crewai.com/concepts/tasks#overview-of-a-task
     
     @task
+    @with_mcp_tools
     def confluence_research(self) -> Task:
         return Task(
             config=self.tasks_config["confluence_research"],  # type: ignore[index]
         )
     
     @task
+    @with_mcp_tools
     def jira_research(self) -> Task:
         return Task(
             config=self.tasks_config["jira_research"],  # type: ignore[index]

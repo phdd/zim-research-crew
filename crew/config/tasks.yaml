@@ -6,19 +6,34 @@ confluence_research:
     {user_input}
     ---
 
-    1. Extract relevant facts, insights and data from the Confluence documents. Organize your findings clearly. Use bullet points grouped by topic, theme, or aspect. For every finding, cite the URL as the source.
-    2. Write your findings to the file `research/confluence.md` (tool write_file).
+    1. Never research information for what the user explicitly specified a source other than Confluence.
+    2. Extract relevant facts, insights and data from the Confluence documents. Organize your findings clearly. Use bullet points grouped by topic, theme, or aspect. For every finding, cite the URL as the source.
+    3. Write your findings to the file `research/confluence.md` (tool write_file).
 
-    Important: Do not write full answers or explanations — just provide factual, structured findings.
+    Important: 
+    - Do not write full answers or explanations — just provide factual, structured findings.
+    - sources must be full URLs to the Confluence pages.
+    - findings should only include content from Confluence, not from Jira.
 
     ---
     confluence_available: {confluence_available}
 
   expected_output: |
-    If confluence is not available, say "Confluence access not configured."
+    If confluence is not available, say "Confluence not available."
     If you are done researching , say "Findings written to `research/confluence.md`".
 
   agent: atlassian_knowledge_manager
+
+  tools:
+    - write_file
+
+  mcp_tools:
+    - confluence_search
+    - confluence_search_user
+    - confluence_get_page
+    - confluence_get_page_children
+    - confluence_get_comments
+    - confluence_get_labels
 
 jira_research:
   description: |
@@ -28,21 +43,44 @@ jira_research:
     {user_input}
     ---
 
-    1. Extract relevant Jira resources. Organize your findings clearly. Use bullet points grouped by topic, theme, or aspect. For every finding, cite the URL as the source.
-    2. Write your findings to the file `research/jira.md` (tool write_file).
+    1. Never research information for what the user explicitly specified a source other than Jira.
+    2. Extract relevant Jira resources. Organize your findings clearly. Use bullet points grouped by topic, theme, or aspect. For every finding, cite the URL as the source.
+    3. Write your findings to the file `research/jira.md` (tool write_file).
 
     Important:
     - Do not write full answers or explanations — just provide factual, structured findings.
-    - Issue-URLs are API-based URLs (e.g., {jira_url}/rest/api/2/issue/<id>) but the user-facing URLs are different (e.g., {jira_url}/browse/<key>). Make sure to convert API URLs to user-facing URLs when citing sources.
+    - sources must be full URLs to the Jira issues or resources.
+    - findings should only include content from Jira, not from Confluence.
 
     ---
     jira_available: {jira_available}
 
   expected_output: |
-    If jira is not available, say "Jira access not configured"
+    If jira is not available, say "Jira not available."
     If you are done, say "Findings written to `research/jira.md`".
 
   agent: atlassian_knowledge_manager
+
+  tools:
+    - write_file
+
+  mcp_tools:
+    - jira_search
+    - jira_search_fields
+    - jira_get_user_profile
+    - jira_get_issue
+    - jira_get_project_issues
+    - jira_get_transitions
+    - jira_get_worklog
+    - jira_get_agile_boards
+    - jira_get_board_issues
+    - jira_get_sprints_from_board
+    - jira_get_sprint_issues
+    - jira_get_link_types
+    - jira_get_project_versions
+    - jira_get_all_projects
+    - jira_batch_get_changelogs
+    # - jira_download_attachments
 
 document_research:
   description: |
@@ -52,19 +90,24 @@ document_research:
     {user_input}
     ---
 
-    1. Extract relevant facts, insights and data from internal documents. Organize your findings clearly. Use bullet points grouped by topic, theme, or aspect. For every finding, cite the filename as the source.
-    2. Write your findings to the file `research/documents.md` (tool write_file).
+    1. Never research information for what the user explicitly specified a source other than internal documents.
+    2. Extract relevant facts, insights and data from internal documents. Organize your findings clearly. Use bullet points grouped by topic, theme, or aspect. For every finding, cite the filename as the source.
+    3. Write your findings to the file `research/documents.md` (tool write_file).
 
-    Important: Do not write full answers or explanations — just provide factual, structured findings.
+    Important:
+    - Do not write full answers or explanations — just provide factual, structured findings.
+    - sources must be full filenames of documents.
+    - when page number is available, always include it in the source citation.
+    - findings should only include content from internal documents, not from Jira or Confluence.
 
   expected_output: |
     If you are done, say "Findings written to `research/documents.md`".
 
   agent: document_knowledge_manager
 
-  context:
-    - confluence_research
-    - jira_research
+  tools:
+    - document_search
+    - write_file
 
 write_report:
   description: |
@@ -76,10 +119,14 @@ write_report:
 
     Use the provided research results from `research/` to create a clean, well-written and logically structured answer or report. Be clear, concise and professional. If structure is implied, follow it. Every statement or claim must be clearly sourced: use the filename for internal documents, and the full URL for linked findings. If a statement is not sourced, it must not appear in the report.
 
-    Important: Files from `research/` should not directly be cited.
+    Important:
+    - Files from `research/` should never directly be cited.
+    - Use markdown without "```"
+    - Do not use horizontal lines (---)
 
   expected_output: |
-    A report that addresses the user's request. Use markdown without "```" and write the result to `report.md`. Do not use horizontal lines (---) anywhere in the report. If you are done, say "Report written to `report.md`".
+    A report that addresses the user's request written to `report.md`.
+    If you are done, say "Report written to `report.md`".
 
   agent: corporate_communications_specialist
 
@@ -96,7 +143,7 @@ review_report:
     {user_input}
     ---
 
-    Review the report (`report.md`) for structure, clarity, factual completeness, writing quality, and especially for correct and complete source citations. Every statement must have a source (filename for internal knowledge, URL for links). If improvements are needed, point them out specifically. If the text is solid, approve it confidently.
+    Review the report (`report.md`) for structure, clarity, factual completeness, writing quality, and especially for correct and complete source citations. Every statement must have a source (filename for documents, full URLs for links). If improvements are needed, point them out specifically. If the text is solid, approve it confidently.
 
   expected_output: >
     Either "approved" or "changes_requested" with a list of specific points to fix.
@@ -110,10 +157,14 @@ improve_report:
   description: |
     The report (`report.md`) has been reviewed and needs improvements. Improve the report according to the reviewer's feedback. Address every point raised, especially regarding structure, clarity, completeness, writing quality, and source citations. Write a polished, final version that meets all criteria to `report.md`.
 
-    Use markdown without "```" and write the result to `report.md`. Do not use horizontal lines (---) anywhere in the report.
+    Important:
+    - Files from `research/` should never directly be cited.
+    - Use markdown without "```"
+    - Do not use horizontal lines (---)
 
   expected_output: >
-    An improved report that addresses the user's request. Use markdown without "```" and write the result to `report.md`. Do not use horizontal lines (---) anywhere in the report. If you are done, say "Improved Report written to `report.md`".
+    An improved report that addresses the user's request written to `report.md`.
+    If you are done, say "Improved Report written to `report.md`".
 
   agent: corporate_communications_specialist
 
