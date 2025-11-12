@@ -18,8 +18,8 @@ from crew.utils.chunker import create_chunker, ChunkingConfig
 
 logger = logging.getLogger(__name__)
 
-if not Path("request.md").exists():
-    Path("request.md").write_text(Path("request.example.md").read_text(encoding='utf-8'), encoding='utf-8')
+if not Path("workspace/request.md").exists():
+    Path("workspace/request.md").write_text(Path("request.example.md").read_text(encoding='utf-8'), encoding='utf-8')
 
 @click.command()
 def kickoff():
