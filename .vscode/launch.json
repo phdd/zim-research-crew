@@ -11,6 +11,14 @@
             "program": "./main.py",
             "console": "integratedTerminal",
             "args": "import-knowledge"
+        },
+        {
+            "name": "Debug Kickoff",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "./main.py",
+            "console": "integratedTerminal",
+            "args": "kickoff"
         }
     ]
 }

@@ -74,7 +74,9 @@ Let's create wonders together with the power and simplicity of crewAI.
 
 ## Roadmap
 
-- [ ] add confluence as rag source
+- [x] add confluence as rag source
+- [ ] fix research contexts (research docs are overwritten)
+- [ ] never cite files in `research/` folder
 - [ ] add task to summarize the documents
   - use first 500 chars of each doc
   - infer contents write mardown file overview
