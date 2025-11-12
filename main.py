@@ -18,8 +18,8 @@ from crew.utils.chunker import create_chunker, ChunkingConfig
 
 logger = logging.getLogger(__name__)
 
-if not Path("user-input.md").exists():
-    Path("user-input.md").write_text(Path("user-input.example.md").read_text(encoding='utf-8'), encoding='utf-8')
+if not Path("request.md").exists():
+    Path("request.md").write_text(Path("request.example.md").read_text(encoding='utf-8'), encoding='utf-8')
 
 @click.command()
 def kickoff():
@@ -27,11 +27,7 @@ def kickoff():
     Run the crew.
     """
 
-    with open(Path("user-input.md"), encoding='utf-8') as f:
-        user_input = f.read().strip()
-
     ProjectResearchCrew().crew().kickoff(inputs={
-        "user_input": user_input,
         "jira_url": os.getenv("JIRA_URL", ""),
         "jira_available": bool(os.getenv("JIRA_API_TOKEN", "")),
         "confluence_available": bool(os.getenv("CONFLUENCE_API_TOKEN", "")),

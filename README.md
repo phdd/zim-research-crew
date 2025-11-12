@@ -25,11 +25,11 @@ Welcome to the Project, powered by [crewAI](https://crewai.com). This template i
       ```
 5. Run the crew with example input
       ```bash
-      cp user-input.example.md user-input.md
+      cp request.example.md workspace/request.md
       uv run main.py kickoff
       ```
 
-This will run and create a `workspace/report.md` file with the output of your research in the root folder.
+This will run and create a `workspace/report.md` file with the output of the research.
 
 ## Crew
 
@@ -82,4 +82,4 @@ Let's create wonders together with the power and simplicity of crewAI.
   - infer contents write mardown file overview
 - [ ] improve retrieval recall (long lists, pagination? strategy/methods?) 
 - [ ] add indexed chunk retrieval (get chunk surroundings for more context)
-- [ ] user-input from file, not from task description 
+- [x] user-input from file, not from task description (now: request.md in workspace, with request.example.md as template)
