@@ -89,8 +89,8 @@ jira_research:
 document_research:
   description: |
     Steps:
-      1. Read the file `request.md` to understand the user's request.
-      2. Extract relevant facts, insights and data from internal documents. Organize your findings clearly. Use bullet points grouped by topic, theme, or aspect. For every finding, cite the filename as the source.
+      1. Read the file `request.md` with the read_file tool to understand the user's request.
+      2. Find and extract relevant facts, insights and data from internal documents by using the document_search tool. Organize your findings clearly. Use bullet points grouped by topic, theme, or aspect. For every finding, cite the filename as the source.
       3. Write your findings to the file `research/documents.md` (tool write_file).
 
     Important rules:
@@ -101,6 +101,7 @@ document_research:
       - Always write the findings to the file!
       - Avoid irrelevant information at all costs!
       - If you dont know something just tell it straight.
+      - Use only the document_search tool to find relevant document chunks (read_file is only for reading request.md).
 
     Sometimes the user references information from another system explicitly. Dont create research subtasks on those subject matters. For example "Finde heraus, wie der Titel des Issues CXAP4-12 im Jira lautet" you know that you don't need to research internal documents for that.
 
