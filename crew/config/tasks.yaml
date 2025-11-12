@@ -1,13 +1,19 @@
 confluence_research:
   description: |
     Steps:
-      1. Extract relevant facts, insights and data from the Confluence documents. Organize your findings clearly. Use bullet points grouped by topic, theme, or aspect. For every finding, cite the URL as the source.
-      2. Write your findings to the file `research/confluence.md` (tool write_file).
+      1. Read the file `request.md` to understand the user's request.
+      2. Extract relevant facts, insights and data from the Confluence documents. Organize your findings clearly. Use bullet points grouped by topic, theme, or aspect. For every finding, cite the URL as the source.
+      3. Write your findings to the file `research/confluence.md` (tool write_file).
 
     Important rules:
       - Do not write full answers or explanations — just provide factual, structured findings.
       - findings should only include content from Confluence, not from Jira.
       - sources must be full URLs to the Confluence pages.
+      - Always write the findings to the file!
+      - Avoid irrelevant information at all costs!
+      - If you dont know something just tell it straight.
+
+    Sometimes the user references information from another system explicitly. Dont create research subtasks on those subject matters. For example "Finde heraus, wie der Titel des Issues CXAP4-33 im Jira lautet" you know that you don't need to research Confluence for that. 
 
     ---
     confluence_available: {confluence_available}
@@ -33,16 +39,24 @@ confluence_research:
 jira_research:
   description: |
     Steps:
-      1. Extract relevant Jira resources. Organize your findings clearly. Use bullet points grouped by topic, theme, or aspect. For every finding, cite the URL as the source.
-      2. Write your findings to the file `research/jira.md` (tool write_file).
+      1. Read the file `request.md` to understand the user's request.
+      2. Extract relevant Jira resources. Organize your findings clearly. Use bullet points grouped by topic, theme, or aspect. For every finding, cite the URL as the source.
+      3. Write your findings to the file `research/jira.md` (tool write_file).
 
     Important rules:
       - Do not write full answers or explanations — just provide factual, structured findings.
       - sources must be full URLs to the Jira issues or resources.
       - findings should only include content from Jira, not from Confluence.
+      - Always write the findings to the file!
+      - Avoid irrelevant information at all costs!
+      - If you dont know something just tell it straight.
+      - Always use jira_base_url for source links. 
+
+    Sometimes the user references information from another system explicitly. Dont create research subtasks on those subject matters. For example "Hohle die Überschrift der Confluence Seite 46596097" you know that you don't need to research Jira for that.
 
     ---
     jira_available: {jira_available}
+    jira_base_url: {jira_url}
 
   expected_output: |
     If jira is not available, say "Jira not available."
@@ -75,14 +89,20 @@ jira_research:
 document_research:
   description: |
     Steps:
-      1. Extract relevant facts, insights and data from internal documents. Organize your findings clearly. Use bullet points grouped by topic, theme, or aspect. For every finding, cite the filename as the source.
-      2. Write your findings to the file `research/documents.md` (tool write_file).
+      1. Read the file `request.md` to understand the user's request.
+      2. Extract relevant facts, insights and data from internal documents. Organize your findings clearly. Use bullet points grouped by topic, theme, or aspect. For every finding, cite the filename as the source.
+      3. Write your findings to the file `research/documents.md` (tool write_file).
 
     Important rules:
       - Do not write full answers or explanations — just provide factual, structured findings.
       - sources must be full filenames of documents.
       - when page number is available, always include it in the source citation.
       - findings should only include content from internal documents, not from Jira or Confluence.
+      - Always write the findings to the file!
+      - Avoid irrelevant information at all costs!
+      - If you dont know something just tell it straight.
+
+    Sometimes the user references information from another system explicitly. Dont create research subtasks on those subject matters. For example "Finde heraus, wie der Titel des Issues CXAP4-12 im Jira lautet" you know that you don't need to research internal documents for that.
 
   expected_output: |
     If you are done, say "Findings written to `research/documents.md`".
@@ -96,16 +116,16 @@ document_research:
 
 write_report:
   description: |
-    Based on research, write a full, user-friendly response to the user request found in the file `request.md`.
-    Use the `read_file` tool to read the contents of `request.md` if you need to know the user's request.
-
-    Use the provided research results from `research/` to create a clean, well-written and logically structured answer or report. Be clear, concise and professional. If structure is implied, follow it. Every statement or claim must be clearly sourced: use the filename for internal documents, and the full URL for linked findings. If a statement is not sourced, it must not appear in the report.
+    Steps:
+      1. Read the file `request.md` to understand the user's request.
+      2. Review the research results from the `research/` folder.
+      3. Create a clean, well-written and logically structured answer or report based on the research results. Be clear, concise and professional. If structure is implied, follow it. Every statement or claim must be clearly sourced: use the filename for internal documents, and the full URL for linked findings. If a statement is not sourced, it must not appear in the report.
+      4. Write the final report to the file `report.md` by using the write_file tool.
 
     Important:
-    - Always write the final report to the file `report.md` by using the write_file tool.
-    - Files from `research/` should never directly be cited.
-    - Use markdown without "```"
-    - Do not use horizontal lines (---)
+      - Files from `research/` should never directly be cited.
+      - Use markdown without "```"
+      - Do not use horizontal lines (---)
 
   expected_output: |
     A report that addresses the user's request written to `report.md`.
