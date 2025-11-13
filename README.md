@@ -74,12 +74,16 @@ Let's create wonders together with the power and simplicity of crewAI.
 
 ## Roadmap
 
-- [x] add confluence as rag source
-- [ ] fix research contexts (research docs are overwritten)
-- [ ] never cite files in `research/` folder
+- [x] add indexed chunk retrieval (get chunk surroundings for more context)
 - [ ] add task to summarize the documents
   - use first 500 chars of each doc
   - infer contents write mardown file overview
+  - tell reseach agent to look before and after the relevant chunks if there's more 
 - [ ] improve retrieval recall (long lists, pagination? strategy/methods?) 
-- [ ] add indexed chunk retrieval (get chunk surroundings for more context)
-- [x] user-input from file, not from task description (now: request.md in workspace, with request.example.md as template)
+- [ ] align tool names with python module names
+- [ ] Test Anthropic models
+- [ ] Test langchains deepagents
+- [x] fix research contexts (research docs are overwritten)
+- [x] never cite files in `research/` folder
+- [x] user-input from file, not from task description
+- [x] add confluence as rag source

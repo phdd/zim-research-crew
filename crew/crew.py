@@ -3,13 +3,14 @@ from typing import List, Literal
 from pydantic import BaseModel
 from mcp import StdioServerParameters
 
-from crewai import Agent, Crew, Process, Task
+from crewai import Agent, Crew, Task
 from crewai.project import CrewBase, agent, crew, task, tool
 from crewai.agents.agent_builder.base_agent import BaseAgent
 from crewai.tasks.conditional_task import ConditionalTask
 from crewai.tasks.task_output import TaskOutput
 
 from crew.tools import (
+    DocumentChunkRangeRetrieverTool,
     DocumentSearchTool,
     WorkspaceFileWriterTool,
     WorkspaceFileReadTool,
@@ -57,6 +58,9 @@ class ProjectResearchCrew:
 
             return task
 
+        wrapper.__name__ = task_method.__name__
+        wrapper.__doc__ = task_method.__doc__
+
         return wrapper
 
     # Learn more about YAML configuration files here:
@@ -77,6 +81,10 @@ class ProjectResearchCrew:
     @tool
     def write_file(self):
         return WorkspaceFileWriterTool()
+    
+    @tool
+    def document_chunk_range_retriever(self):
+        return DocumentChunkRangeRetrieverTool()
 
     @agent
     def atlassian_knowledge_manager(self):
@@ -111,6 +119,12 @@ class ProjectResearchCrew:
     # https://docs.crewai.com/concepts/tasks#overview-of-a-task
     
     @task
+    def document_research(self) -> Task:
+        return Task(
+            config=self.tasks_config["document_research"],  # type: ignore[index]
+        )
+    
+    @task
     @with_mcp_tools
     def confluence_research(self) -> Task:
         return Task(
@@ -122,12 +136,6 @@ class ProjectResearchCrew:
     def jira_research(self) -> Task:
         return Task(
             config=self.tasks_config["jira_research"],  # type: ignore[index]
-        )
-    
-    @task
-    def document_research(self) -> Task:
-        return Task(
-            config=self.tasks_config["document_research"],  # type: ignore[index]
         )
 
     @task

@@ -20,15 +20,17 @@ single Markdown-formatted string. Each chunk includes:
 The tool is intended to be used before anything else search and
 should always query documents using the user's original language.
 """
-
-from textwrap import dedent
 from typing import Type
 
-from crewai.tools import BaseTool
+import click
+
+from textwrap import dedent
 from pydantic import BaseModel, Field
+
+from crewai.tools import BaseTool
+from crewai.rag.types import SearchResult
 from crewai.rag.config.utils import get_rag_client
 
-import sys
 from sentence_transformers import CrossEncoder
 
 
@@ -38,17 +40,19 @@ RERANK_TOP_K = 5
 CROSS_ENCODER = CrossEncoder("cross-encoder/ms-marco-MiniLM-L-6-v2")
 
 class DocumentSearchInput(BaseModel):
-    """Input schema for DocumentSearchTool."""
-    query: str = Field(..., description="The search query.")
-    limit: int = Field(RERANK_TOP_K, description="The maximum number of results to return.")
+    """Input schema for DocumentSearchTool"""
+    query: str = Field(..., description="The search query")
 
 class DocumentSearchTool(BaseTool):
     name: str = "Document Search"
-    description: str = (
-        "A tool to search internal documents for relevant information to answer questions. "
-        "Always use this tool first before searching anywhere else. If you find relevant information, "
-        "cite the filename as the source. Always use the users original language to query the documents! "
-    )
+
+    description: str = dedent(
+        """
+        A tool to search internal documents for relevant information to answer questions.
+        Always use this tool first before searching anywhere else. If you find relevant information,
+        cite the filename as the source. Always use the user's original language to query the documents!
+        """)
+
     args_schema: Type[BaseModel] = DocumentSearchInput
 
     def _rerank(self, query: str, results: list) -> list:
@@ -66,7 +70,7 @@ class DocumentSearchTool(BaseTool):
         results.sort(key=lambda r: r["score"], reverse=True)
         return results
 
-    def _format_results(self, results: list) -> str:
+    def _format_results(self, results: list[SearchResult]) -> str:
         """Format the reranked results, using all available metadata."""
         return "".join([
             dedent("""
@@ -82,7 +86,7 @@ class DocumentSearchTool(BaseTool):
             ) for result in results
         ])
 
-    def _run(self, query: str, limit: int = RERANK_TOP_K) -> str:
+    def _run(self, query: str) -> str:
         client = get_rag_client()
         results = client.search(collection_name="knowledge", query=query, limit=VECTOR_TOP_K)
 
@@ -90,9 +94,16 @@ class DocumentSearchTool(BaseTool):
             return "No relevant documents found."
 
         reranked = self._rerank(query, results)
-        return self._format_results(reranked[:limit])
+        return self._format_results(reranked[:RERANK_TOP_K])
 
+
+
+@click.command()
+@click.argument('query', type=click.STRING)
+@click.option('--limit', '-l', default=RERANK_TOP_K, type=click.INT, help='Maximum number of results to return')
+def main(query, limit):
+    """Search internal documents for relevant information."""
+    print(DocumentSearchTool()._run(query=query))
 
 if __name__ == "__main__":
-    print(DocumentSearchTool()._run(
-        query=sys.argv[1] if len(sys.argv) > 1 else input("Query: ")))
+    main()

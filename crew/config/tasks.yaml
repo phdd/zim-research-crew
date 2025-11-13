@@ -1,28 +1,66 @@
+document_research:
+  description: |
+    Steps:
+      1. Read the file `request.md` to understand the user's request by using the read_file tool.
+      2. Think about relevant research questions (and variations) you will answer with the documents. 
+      3. Find and extract relevant facts, insights and data from internal documents by using the document_search tool. Organize your findings clearly. Use bullet points grouped by topic, theme, or aspect. For every finding, cite the filename and page as the source.
+      4. Write your detailed findings to the file `research/documents.md` by using the tool write_file.
+
+    Important rules:
+      - Create your own research findings structure (request structure will be considered separately later)
+      - sources must be full filenames of documents with page numbers included
+      - findings should only include content from internal documents, not from Jira or Confluence
+      - Always write the findings to the file
+      - Avoid irrelevant information at all costs
+      - If you dont know something or research had no results, just tell it straight
+      - Use only the document_search tool to find relevant document chunks (read_file is for reading `request.md`).
+      - Never return more than 5 bullet points
+
+    Sometimes the user references information from another system explicitly. Do not create research subtasks for those topics. For example:
+      "Find out what the title of the issue CXAP4-12 is in Jira" (you know that you don't need to research internal documents for that).
+
+  expected_output: |
+    If you are done, summarize your findings.
+
+  async_execution: false
+  agent: document_knowledge_manager
+
+  tools:
+    - document_search
+    - document_chunk_range_retriever
+    - write_file
+    - read_file
+
 confluence_research:
   description: |
     Steps:
-      1. Read the file `request.md` to understand the user's request.
-      2. Extract relevant facts, insights and data from the Confluence documents. Organize your findings clearly. Use bullet points grouped by topic, theme, or aspect. For every finding, cite the URL as the source.
-      3. Write your findings to the file `research/confluence.md` (tool write_file).
+      1. Read the file `request.md` to understand the user's request by using the read_file tool.
+      2. Think about relevant research questions (and variations) you will answer with the Confluence Wiki. 
+      3. Extract relevant facts, insights and data. Organize your findings clearly. Use bullet points grouped by topic, theme, or aspect. For every finding, cite the URL as the source.
+      4. Write your findings to the file `research/confluence.md` by using the tool write_file.
 
     Important rules:
-      - Do not write full answers or explanations — just provide factual, structured findings.
-      - findings should only include content from Confluence, not from Jira.
-      - sources must be full URLs to the Confluence pages.
-      - Always write the findings to the file!
-      - Avoid irrelevant information at all costs!
-      - If you dont know something just tell it straight.
+      - findings should only include content from Confluence, not from Jira
+      - Create your own research findings structure (request structure will be considered separately later)
+      - sources must be full URLs to the Confluence pages
+      - Avoid irrelevant information at all costs
+      - If you dont know something or research had no results, just tell it straight
 
-    Sometimes the user references information from another system explicitly. Dont create research subtasks on those subject matters. For example "Finde heraus, wie der Titel des Issues CXAP4-33 im Jira lautet" you know that you don't need to research Confluence for that. 
+    Sometimes the user references information from another system explicitly. Avoid researching those topics. For example:
+      "Find out what the title of the issue CXAP4-33 is in Jira" (you know that you don't need to research Confluence for that).
 
     ---
     confluence_available: {confluence_available}
 
   expected_output: |
     If confluence is not available, say "Confluence not available."
-    If you are done researching , say "Findings written to `research/confluence.md`".
+    If you are done, say "Research done."
 
+  async_execution: false
   agent: atlassian_knowledge_manager
+
+  context:
+    - document_research
 
   tools:
     - write_file
@@ -39,20 +77,21 @@ confluence_research:
 jira_research:
   description: |
     Steps:
-      1. Read the file `request.md` to understand the user's request.
-      2. Extract relevant Jira resources. Organize your findings clearly. Use bullet points grouped by topic, theme, or aspect. For every finding, cite the URL as the source.
-      3. Write your findings to the file `research/jira.md` (tool write_file).
+      1. Read the file `request.md` to understand the user's request by using the read_file tool.
+      2. Think about relevant research questions (and variations) you will answer with the Jira Systen. 
+      2. Extract relevant resources and organize your findings clearly. Use bullet points grouped by topic, theme, or aspect. For every finding, cite the URL as the source.
+      3. Write your findings to the file `research/jira.md` by using the tool write_file.
 
     Important rules:
-      - Do not write full answers or explanations — just provide factual, structured findings.
-      - sources must be full URLs to the Jira issues or resources.
-      - findings should only include content from Jira, not from Confluence.
-      - Always write the findings to the file!
-      - Avoid irrelevant information at all costs!
-      - If you dont know something just tell it straight.
-      - Always use jira_base_url for source links. 
+      - findings should only include content from Jira, not from Confluence
+      - Create your own research findings structure (request structure will be considered separately later)
+      - sources must be full URLs to the Jira issues or resources
+      - Avoid irrelevant information at all costs
+      - If you dont know something or research had no results, just tell it straight
+      - Always use jira_base_url for source links.
 
-    Sometimes the user references information from another system explicitly. Dont create research subtasks on those subject matters. For example "Hohle die Überschrift der Confluence Seite 46596097" you know that you don't need to research Jira for that.
+    Sometimes the user references information from another system explicitly. Avoid researching those topics. For example:
+      "Get the headline of Confluence page 46596097" (you know that you don't need to research Jira for that).
 
     ---
     jira_available: {jira_available}
@@ -60,9 +99,13 @@ jira_research:
 
   expected_output: |
     If jira is not available, say "Jira not available."
-    If you are done, say "Findings written to `research/jira.md`".
+    If you are done, say "Research done."
 
+  async_execution: false
   agent: atlassian_knowledge_manager
+
+  context:
+    - document_research
 
   tools:
     - write_file
@@ -86,45 +129,22 @@ jira_research:
     - jira_batch_get_changelogs
     # - jira_download_attachments
 
-document_research:
-  description: |
-    Steps:
-      1. Read the file `request.md` with the read_file tool to understand the user's request.
-      2. Find and extract relevant facts, insights and data from internal documents by using the document_search tool. Organize your findings clearly. Use bullet points grouped by topic, theme, or aspect. For every finding, cite the filename as the source.
-      3. Write your findings to the file `research/documents.md` (tool write_file).
-
-    Important rules:
-      - Do not write full answers or explanations — just provide factual, structured findings.
-      - sources must be full filenames of documents.
-      - when page number is available, always include it in the source citation.
-      - findings should only include content from internal documents, not from Jira or Confluence.
-      - Always write the findings to the file!
-      - Avoid irrelevant information at all costs!
-      - If you dont know something just tell it straight.
-      - Use only the document_search tool to find relevant document chunks (read_file is only for reading request.md).
-
-    Sometimes the user references information from another system explicitly. Dont create research subtasks on those subject matters. For example "Finde heraus, wie der Titel des Issues CXAP4-12 im Jira lautet" you know that you don't need to research internal documents for that.
-
-  expected_output: |
-    If you are done, say "Findings written to `research/documents.md`".
-
-  agent: document_knowledge_manager
-
-  tools:
-    - document_search
-    - write_file
-    - read_file
-
 write_report:
   description: |
     Steps:
       1. Read the file `request.md` to understand the user's request.
-      2. Review the research results from the `research/` folder.
-      3. Create a clean, well-written and logically structured answer or report based on the research results. Be clear, concise and professional. If structure is implied, follow it. Every statement or claim must be clearly sourced: use the filename for internal documents, and the full URL for linked findings. If a statement is not sourced, it must not appear in the report.
-      4. Write the final report to the file `report.md` by using the write_file tool.
+      2. Read all research results from the `research/` folder:
+        - `research/jira.md`
+        - `research/confluence.md`
+        - `research/documents.md`
+      3. Create a clean, well-written and logically structured answer or report based on the research results. Be clear, concise and professional. If structure from the users request is implied, follow it. Every statement or claim must be clearly sourced:
+        - Documents: A simple Markdown link directly after the content, always with the folder `../knowledge/`, e.g. [Source Document.pdf Page 9](../knowledge/Source%20Document.pdf)
+        - Web links: A simple Markdown link directly after the content, e.g. [PageName](https://...)
+      4. Write the report to the file `report.md` by using the write_file tool.
 
     Important:
       - Files from `research/` should never directly be cited.
+      - If a statement does not have a source, it must not appear.
       - Use markdown without "```"
       - Do not use horizontal lines (---)
 
@@ -135,19 +155,42 @@ write_report:
   agent: corporate_communications_specialist
 
   context:
-    - jira_research
-    - confluence_research
     - document_research
+    - confluence_research
+    - jira_research
 
 review_report:
   description: |
     A report has been written in response to the user request found in the file `request.md`.
     Use the `read_file` tool to read the contents of `request.md` if you need to know the user's request.
 
-    Review the report (`report.md`) for structure, clarity, factual completeness, writing quality, and especially for correct and complete source citations. Every statement must have a source (filename for documents, full URLs for links). If improvements are needed, point them out specifically. If the text is solid, approve it confidently.
+    Review the report (`report.md`) for structure, clarity, factual completeness, writing quality, and especially for correct and complete citations. Every statement must have a source. Use the following citation format:
+      - Documents: A simple Markdown link directly after the content, always with the folder `../knowledge/`, e.g. [Source Document.pdf Page 3](../knowledge/Source%20Document.pdf)
+      - Web links: A simple Markdown link directly after the content, e.g. [PageName](https://...)
+
+    If improvements are needed, list them specifically. If the text is solid, give a clear approval.
 
   expected_output: >
     Either "approved" or "changes_requested" with a list of specific points to fix.
+
+    Approval Example:
+
+    {
+      "result": "approved",
+      "requested_changes": []
+    }
+
+    Change Request Example:
+
+    {
+      "result": "changes_requested",
+      "requested_changes": [
+        "Citation `[Doc.pdf Page 2](Doc.pdf)` must be relative to the '../knowledge/' directory.",
+        "Citation `[Stuff XY.pdf](../knowledge/Stuff%20XY.pdf)` must have a page number.",
+        "Link [https://api.example.com/data] must be a user-facing link.",
+        "Several statements in the 'Recommendations' section lack sources and must be supported by evidence from the research."
+      ]
+    }
 
   agent: critical_reviewer
 

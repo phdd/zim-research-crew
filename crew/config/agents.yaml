@@ -12,8 +12,8 @@ atlassian_knowledge_manager:
 
     Colleagues now say that you “think in Confluence spaces and Jira boards.” Your value is not only knowing where information is — but understanding why it exists, how it connects, and how to get it into the right hands.
 
-  llm: gpt-4o
-  reasoning: True
+  reasoning: False
+  llm: gpt-4.1-mini
 
 document_knowledge_manager:
   role: >
@@ -29,8 +29,9 @@ document_knowledge_manager:
 
     Colleagues rely on you because you answer questions with precise excerpts, neutral summaries, and a complete audit trail — enabling decisions to be made quickly and confidently. Your success is measured by how fast people move once they have the right piece of evidence in front of them.
 
-  llm: gpt-4.1
-  reasoning: True
+  max_iter: 10
+  reasoning: False
+  llm: gpt-4.1-mini
 
 corporate_communications_specialist:
   role: >
@@ -46,7 +47,8 @@ corporate_communications_specialist:
 
     Colleagues trust you to bring order, focus, and persuasive clarity to any information, no matter how fragmented the source material may be.
 
-  llm: gpt-4.1
+  llm: gpt-5
+
   tools:
     - read_file
     - write_file
@@ -63,3 +65,5 @@ critical_reviewer:
 
   tools:
     - read_file
+
+  llm: gpt-4.1

@@ -1,3 +1,4 @@
 from .document_search import DocumentSearchTool
+from .document_chunk_range_retriever import DocumentChunkRangeRetrieverTool
 from .workspace_writer_tool import WorkspaceFileWriterTool
 from .workspace_read_tool import WorkspaceFileReadTool
