@@ -12,7 +12,7 @@ from crewai.tasks.task_output import TaskOutput
 from crew.tools import (
     DocumentChunkContextTool,
     DocumentSearchTool,
-    WorkspaceFileWriterTool,
+    WorkspaceFileWriteTool,
     WorkspaceFileReadTool,
 )
 
@@ -71,20 +71,20 @@ class ProjectResearchCrew:
     # https://docs.crewai.com/concepts/agents#agent-tools
     
     @tool
+    def document_chunk_context(self):
+        return DocumentChunkContextTool()
+    
+    @tool
     def document_search(self):
         return DocumentSearchTool()
 
     @tool
-    def read_file(self):
+    def workspace_file_read(self):
         return WorkspaceFileReadTool()
     
     @tool
-    def write_file(self):
-        return WorkspaceFileWriterTool()
-    
-    @tool
-    def document_chunk_context(self):
-        return DocumentChunkContextTool()
+    def workspace_file_write(self):
+        return WorkspaceFileWriteTool()
 
     @agent
     def atlassian_knowledge_manager(self):

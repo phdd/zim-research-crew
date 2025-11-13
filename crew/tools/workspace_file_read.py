@@ -2,16 +2,20 @@ from typing import Any
 from crewai.tools import BaseTool
 from pydantic import BaseModel
 import os
+from textwrap import dedent
 
 class WorkspaceFileReadToolInput(BaseModel):
     filename: str
 
 class WorkspaceFileReadTool(BaseTool):
-    name: str = "Workspace File Read Tool"
-    description: str = (
-        "A tool to read content from a specified file. "
-        "Accepts filename as input."
-    )
+    name: str = "workspace_file_read"
+
+    description: str = dedent(
+        """
+        A tool to read content from a specified file.
+        Accepts filename as input.
+        """)
+
     args_schema: type[BaseModel] = WorkspaceFileReadToolInput
 
     def _run(self, filename: str) -> str:
