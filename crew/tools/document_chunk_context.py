@@ -13,23 +13,23 @@ from crewai.tools import BaseTool
 from crewai.rag.config.utils import get_rag_client
 
 
-class DocumentChunkRangeRetrieverInput(BaseModel):
-    """Input schema for DocumentChunkRangeRetrieverTool"""
+class DocumentChunkContextInput(BaseModel):
+    """Input schema for DocumentChunkContextTool"""
     filename: str = Field(..., description="The filename of the document to retrieve context chunks from")
     chunk_index: int = Field(..., description="The central chunk index (will not be included)")
     before_context: int = Field(0, description="Number of chunks before the central chunk to include")
     after_context: int = Field(0, description="Number of chunks after the central chunk to include")
 
 
-class DocumentChunkRangeRetrieverTool(BaseTool):
-    name: str = "Document Chunk Range Retriever"
+class DocumentChunkContextTool(BaseTool):
+    name: str = "document_chunk_context"
 
     description: str = dedent(
         """
         Retrieve a range of document chunks from the vector database based on filename and chunk index range, EXCLUDING the chunk at 'chunk_index'. Use this tool to get surrounding context for specific chunks to check if there is relevant information nearby. This way you will not miss important details that are just outside the initially retrieved chunks. Always use this tool after performing a document search to check if there's more before or after that to maximize the recall of relevant information.
         """)
 
-    args_schema: Type[BaseModel] = DocumentChunkRangeRetrieverInput
+    args_schema: Type[BaseModel] = DocumentChunkContextInput
 
     def _format_results(self, results: list[dict]) -> str:
         """Format the results, using all available metadata."""
@@ -80,8 +80,7 @@ class DocumentChunkRangeRetrieverTool(BaseTool):
 @click.option('--before-context', '-B', default=0, type=click.INT, help='Number of chunks before the central chunk to include')
 @click.option('--after-context', '-A', default=0, type=click.INT, help='Number of chunks after the central chunk to include')
 def main(filename: str, chunk_index: int, before_context: int, after_context: int):
-    """Retrieve a range of document chunks from a vector database."""
-    result = DocumentChunkRangeRetrieverTool()._run(
+    result = DocumentChunkContextTool()._run(
         filename=filename,
         chunk_index=chunk_index,
         before_context=before_context,

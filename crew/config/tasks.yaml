@@ -27,7 +27,7 @@ document_research:
 
   tools:
     - document_search
-    - document_chunk_range_retriever
+    - document_chunk_context
     - write_file
     - read_file
 

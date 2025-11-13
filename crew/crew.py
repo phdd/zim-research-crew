@@ -10,7 +10,7 @@ from crewai.tasks.conditional_task import ConditionalTask
 from crewai.tasks.task_output import TaskOutput
 
 from crew.tools import (
-    DocumentChunkRangeRetrieverTool,
+    DocumentChunkContextTool,
     DocumentSearchTool,
     WorkspaceFileWriterTool,
     WorkspaceFileReadTool,
@@ -83,8 +83,8 @@ class ProjectResearchCrew:
         return WorkspaceFileWriterTool()
     
     @tool
-    def document_chunk_range_retriever(self):
-        return DocumentChunkRangeRetrieverTool()
+    def document_chunk_context(self):
+        return DocumentChunkContextTool()
 
     @agent
     def atlassian_knowledge_manager(self):
