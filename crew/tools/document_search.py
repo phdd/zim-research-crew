@@ -44,7 +44,7 @@ class DocumentSearchInput(BaseModel):
     query: str = Field(..., description="The search query")
 
 class DocumentSearchTool(BaseTool):
-    name: str = "Document Search"
+    name: str = "document_search"
 
     description: str = dedent(
         """
