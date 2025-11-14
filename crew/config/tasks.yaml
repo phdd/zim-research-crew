@@ -8,8 +8,8 @@ document_research:
         Organize your findings clearly. Use bullet points grouped by topic, theme, or aspect.  
         For every finding, cite the filename and page as the source.
 
-
     Important rules:
+      - Context should only be used for research and will be left out of the final report.
       - Create your own research findings structure (request structure will be considered separately later)
       - sources must be full filenames of documents with page numbers included
       - findings should only include content from internal documents, not from Jira or Confluence
@@ -44,6 +44,7 @@ confluence_research:
       For every finding, cite the URL as the source.
 
     Important rules:
+      - get the full page with confluence_get_page after identifying relevant pages
       - findings should only include content from Confluence, not from Jira
       - Create your own research findings structure (request structure will be considered separately later)
       - sources must be full URLs to the Confluence pages
