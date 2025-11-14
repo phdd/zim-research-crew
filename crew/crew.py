@@ -170,9 +170,5 @@ class ProjectResearchCrew:
         return Crew(
             agents=self.agents,
             tasks=self.tasks,
-            # process=Process.hierarchical,
-            # manager_llm="gpt-4.1",
-            # planning=True,
-            # memory=True,
             verbose=True,
         )

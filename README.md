@@ -74,6 +74,7 @@ Let's create wonders together with the power and simplicity of crewAI.
 
 ## Roadmap
 
+- [x] research tasks still output all details => writer context bloat
 - [ ] add task to summarize the documents
   - use first 500 chars of each doc
   - infer contents write mardown file overview

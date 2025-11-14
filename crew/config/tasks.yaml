@@ -1,26 +1,29 @@
 document_research:
   description: |
-    Steps:
-      1. Read the file `request.md` to understand the user's request by using the workspace_file_read tool.
-      2. Think about relevant research questions (and variations) you will answer with the documents. 
-      3. Find and extract relevant facts, insights and data from internal documents by using the document_search tool. Organize your findings clearly. Use bullet points grouped by topic, theme, or aspect. For every finding, cite the filename and page as the source.
-      4. Write your detailed findings to the file `research/documents.md` by using the tool workspace_file_write.
+    Document Research:
+
+    1. Read the file `request.md` to understand the user's request by using the workspace_file_read tool.
+    2. Think about relevant research questions (and variations) you will answer with the documents. 
+    3. Find and extract relevant facts, insights and data from internal documents by using the document_search tool.  
+        Organize your findings clearly. Use bullet points grouped by topic, theme, or aspect.  
+        For every finding, cite the filename and page as the source.
+
 
     Important rules:
       - Create your own research findings structure (request structure will be considered separately later)
       - sources must be full filenames of documents with page numbers included
       - findings should only include content from internal documents, not from Jira or Confluence
-      - Always write the findings to the file
       - Avoid irrelevant information at all costs
       - If you dont know something or research had no results, just tell it straight
       - Use only the document_search tool to find relevant document chunks (workspace_file_read is for reading `request.md`).
-      - Never return more than 5 bullet points
+      - Do not use horizontal lines (---)
+      - Use markdown without "```"
 
     Sometimes the user references information from another system explicitly. Do not create research subtasks for those topics. For example:
       "Find out what the title of the issue CXAP4-12 is in Jira" (you know that you don't need to research internal documents for that).
 
   expected_output: |
-    If you are done, summarize your findings.
+    A detailed, well-structured research report in Markdown.
 
   async_execution: false
   agent: document_knowledge_manager
@@ -28,16 +31,17 @@ document_research:
   tools:
     - document_search
     - document_chunk_context
-    - workspace_file_write
     - workspace_file_read
 
 confluence_research:
   description: |
-    Steps:
-      1. Read the file `request.md` to understand the user's request by using the workspace_file_read tool.
-      2. Think about relevant research questions (and variations) you will answer with the Confluence Wiki. 
-      3. Extract relevant facts, insights and data. Organize your findings clearly. Use bullet points grouped by topic, theme, or aspect. For every finding, cite the URL as the source.
-      4. Write your findings to the file `research/confluence.md` by using the tool workspace_file_write.
+    Confluence Research:
+
+    1. Read the file `request.md` to understand the user's request by using the workspace_file_read tool.
+    2. Think about relevant research questions (and variations) you will answer with the Confluence Wiki. 
+    3. Extract relevant facts, insights and data. Organize your findings clearly.  
+      Use bullet points grouped by topic, theme, or aspect.  
+      For every finding, cite the URL as the source.
 
     Important rules:
       - findings should only include content from Confluence, not from Jira
@@ -45,6 +49,8 @@ confluence_research:
       - sources must be full URLs to the Confluence pages
       - Avoid irrelevant information at all costs
       - If you dont know something or research had no results, just tell it straight
+      - Do not use horizontal lines (---)
+      - Use markdown without "```"
 
     Sometimes the user references information from another system explicitly. Avoid researching those topics. For example:
       "Find out what the title of the issue CXAP4-33 is in Jira" (you know that you don't need to research Confluence for that).
@@ -53,8 +59,7 @@ confluence_research:
     confluence_available: {confluence_available}
 
   expected_output: |
-    If confluence is not available, say "Confluence not available."
-    If you are done, say "Research done."
+    A detailed, well-structured research report in Markdown or "Confluence not available".
 
   async_execution: false
   agent: atlassian_knowledge_manager
@@ -63,7 +68,6 @@ confluence_research:
     - document_research
 
   tools:
-    - workspace_file_write
     - workspace_file_read
 
   mcp_tools:
@@ -76,11 +80,14 @@ confluence_research:
 
 jira_research:
   description: |
-    Steps:
-      1. Read the file `request.md` to understand the user's request by using the workspace_file_read tool.
-      2. Think about relevant research questions (and variations) you will answer with the Jira Systen. 
-      2. Extract relevant resources and organize your findings clearly. Use bullet points grouped by topic, theme, or aspect. For every finding, cite the URL as the source.
-      3. Write your findings to the file `research/jira.md` by using the tool workspace_file_write.
+    Jira Research:
+
+    1. Read the file `request.md` to understand the user's request by using the workspace_file_read tool.
+    2. Think about relevant research questions (and variations) you will answer with the Jira System. 
+    3. Extract relevant resources and organize your findings clearly.  
+      Use bullet points grouped by topic, theme, or aspect.  
+      For every finding, cite the URL as the source.
+
 
     Important rules:
       - findings should only include content from Jira, not from Confluence
@@ -89,6 +96,8 @@ jira_research:
       - Avoid irrelevant information at all costs
       - If you dont know something or research had no results, just tell it straight
       - Always use jira_base_url for source links.
+      - Do not use horizontal lines (---)
+      - Use markdown without "```"
 
     Sometimes the user references information from another system explicitly. Avoid researching those topics. For example:
       "Get the headline of Confluence page 46596097" (you know that you don't need to research Jira for that).
@@ -98,8 +107,7 @@ jira_research:
     jira_base_url: {jira_url}
 
   expected_output: |
-    If jira is not available, say "Jira not available."
-    If you are done, say "Research done."
+    A detailed, well-structured research result (as Markdown) or "Jira not available".
 
   async_execution: false
   agent: atlassian_knowledge_manager
@@ -108,7 +116,6 @@ jira_research:
     - document_research
 
   tools:
-    - workspace_file_write
     - workspace_file_read
 
   mcp_tools:
@@ -131,26 +138,21 @@ jira_research:
 
 write_report:
   description: |
-    Steps:
-      1. Read the file `request.md` to understand the user's request.
-      2. Read all research results from the `research/` folder:
-        - `research/jira.md`
-        - `research/confluence.md`
-        - `research/documents.md`
-      3. Create a clean, well-written and logically structured answer or report based on the research results. Be clear, concise and professional. If structure from the users request is implied, follow it. Every statement or claim must be clearly sourced:
-        - Documents: A simple Markdown link directly after the content, always with the folder `../knowledge/`, e.g. [Source Document.pdf Page 9](../knowledge/Source%20Document.pdf)
-        - Web links: A simple Markdown link directly after the content, e.g. [PageName](https://...)
-      4. Write the report to the file `report.md` by using the workspace_file_write tool.
+    1. Read the file `request.md` to understand the user's request.
+    2. Study all the research results available.
+    3. Create a clean, well-written and logically structured answer or report based on the research results.  
+      Be clear, concise and professional. If structure from the users request is implied, follow it. Every statement or claim must be clearly sourced:
+
+      - Documents: A Markdown link directly after the content, always with the folder `../knowledge/`, e.g. [Source Document.pdf Page 9](../knowledge/Source%20Document.pdf)
+      - Web links: A Markdown link directly after the content, e.g. [PageName](https://...)
 
     Important:
-      - Files from `research/` should never directly be cited.
-      - If a statement does not have a source, it must not appear.
-      - Use markdown without "```"
+      - If a statement does not have a source, it must not appear
       - Do not use horizontal lines (---)
+      - Use markdown without "```"
 
   expected_output: |
-    A report that addresses the user's request written to `report.md`.
-    If you are done, say "Report written to `report.md`".
+    A well-written, structured report in Markdown.
 
   agent: corporate_communications_specialist
 
@@ -161,12 +163,11 @@ write_report:
 
 review_report:
   description: |
-    A report has been written in response to the user request found in the file `request.md`.
-    Use the `workspace_file_read` tool to read the contents of `request.md` if you need to know the user's request.
+    Review the report for structure, clarity, factual completeness, writing quality, and especially for correct and complete citations.  
+    Every statement must have a source. Use the following citation format:
 
-    Review the report (`report.md`) for structure, clarity, factual completeness, writing quality, and especially for correct and complete citations. Every statement must have a source. Use the following citation format:
-      - Documents: A simple Markdown link directly after the content, always with the folder `../knowledge/`, e.g. [Source Document.pdf Page 3](../knowledge/Source%20Document.pdf)
-      - Web links: A simple Markdown link directly after the content, e.g. [PageName](https://...)
+      - Documents: A Markdown link directly after the content, always with the folder `../knowledge/`, e.g. [Source Document.pdf Page 3](../knowledge/Source%20Document.pdf)
+      - Web links: A Markdown link directly after the content, e.g. [PageName](https://...)
 
     If improvements are needed, list them specifically. If the text is solid, give a clear approval.
 
@@ -199,20 +200,26 @@ review_report:
 
 improve_report:
   description: |
-    The report (`report.md`) has been reviewed and needs improvements. Improve the report according to the reviewer's feedback. Address every point raised, especially regarding structure, clarity, completeness, writing quality, and source citations. Write a polished, final version that meets all criteria to `report.md`.
+    The report has been reviewed and needs improvements. 
+
+    1. Improve the report according to the reviewer's feedback. 
+       Address every point raised, especially regarding structure, clarity, completeness, writing quality, and source citations. 
+    2. Write the polished, final version that meets all criteria to `report.md`.
 
     Important:
-    - Always write the improved report to the file `report.md` by using the workspace_file_write tool.
-    - Files from `research/` should never directly be cited.
-    - Use markdown without "```"
-    - Do not use horizontal lines (---)
+      - always write the file and never return the report directly
+      - If a statement does not have a source, it must not appear
+      - Do not use horizontal lines (---)
+      - Use markdown without "```"
 
   expected_output: >
-    An improved report that addresses the user's request written to `report.md`.
-    If you are done, say "Improved Report written to `report.md`".
+    If you are done, say "Report Done".
 
   agent: corporate_communications_specialist
 
   context:
     - write_report
     - review_report
+
+  tools:
+    - workspace_file_write

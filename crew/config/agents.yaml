@@ -49,10 +49,6 @@ corporate_communications_specialist:
 
   llm: gpt-5
 
-  tools:
-    - workspace_file_read
-    - workspace_file_write
-
 critical_reviewer:
   role: >
     Senior Documentation Quality Auditor
