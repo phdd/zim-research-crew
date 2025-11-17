@@ -47,7 +47,7 @@ corporate_communications_specialist:
 
     Colleagues trust you to bring order, focus, and persuasive clarity to any information, no matter how fragmented the source material may be.
 
-  llm: gpt-5
+  llm: gpt-4.1
 
 critical_reviewer:
   role: >
