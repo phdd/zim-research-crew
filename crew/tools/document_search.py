@@ -94,7 +94,27 @@ class DocumentSearchTool(BaseTool):
             return "No relevant documents found."
 
         reranked = self._rerank(query, results)
-        return self._format_results(reranked[:RERANK_TOP_K])
+        document_names = set()
+
+        for result in results:
+            name = result.get('metadata', {}).get('title')
+
+            if name:
+                document_names.add(name)
+
+        summaries = ""
+
+        for name in document_names:
+            summary_path = f"knowledge/{name}.summary.md"
+            try:
+                with open(summary_path, "r", encoding="utf-8") as f:
+                    summaries += f.read() + "\n\n"
+            except FileNotFoundError:
+                ...
+                # summaries += f"## {name}\n_No summary found._\n"
+
+        formatted_results = self._format_results(reranked[:RERANK_TOP_K])
+        return f"{formatted_results}\n\n---\n\n{summaries}"
 
 
 

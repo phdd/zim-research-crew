@@ -10,11 +10,15 @@ from uuid import uuid4
 import logging
 import click
 
+from crewai import LLM
 from crewai.rag.config.utils import get_rag_client
-from docling.document_converter import DocumentConverter
 from crewai.utilities.constants import KNOWLEDGE_DIRECTORY
 from crew.crew import ProjectResearchCrew
 from crew.utils.chunker import create_chunker, ChunkingConfig
+
+from docling.document_converter import DocumentConverter
+from docling_core.types.doc import DoclingDocument
+from textwrap import dedent
 
 logger = logging.getLogger(__name__)
 
@@ -48,7 +52,11 @@ def import_knowledge():
 
     converter = DocumentConverter()
     knowledge_dir = Path(KNOWLEDGE_DIRECTORY)
-    file_paths = [str(p) for p in knowledge_dir.rglob("*") if p.is_file() and not p.name.startswith(".")]
+    file_paths = [
+        str(p) for p in knowledge_dir.rglob("*") 
+        if p.is_file() 
+            and not p.name.startswith(".") 
+            and not p.suffix == ".summary.md"]
 
     allowed_suffixes = {fmt.value for fmt in converter.allowed_formats}
     valid_files = []
@@ -84,7 +92,37 @@ def import_knowledge():
     chunker = create_chunker(ChunkingConfig())
     chunks = []
 
+    async def create_summary(doc: DoclingDocument):
+        llm = LLM(model="gpt-4.1")
+        snippet = doc.export_to_markdown()[:1000]
+
+        summary = llm.call(messages=[{
+            "role": "system",
+            "content": dedent(
+                f"""
+                You are an assistant that analyzes documents. You classify the snippet and create a summary of 3 sentences without giving details about the contents. Always use the document's language. Use the following md-format without fences like "```":
+
+                ```
+                # {doc.name}
+    
+                Type: <type of document, e.g., Contract, Report, Email, Invoice, etc.>
+                Creator: <document creator if available>
+                Audience: <intended audience if available>
+                Summary: <three-sentence summary>
+                ```
+                """)
+        }, {
+            "role": "user",
+            "content": snippet
+        }])
+
+        summary_path = knowledge_dir / f"{doc.name}.summary.md"
+        summary_path.write_text(summary, encoding="utf-8")
+
+
     async def process_document(doc):
+        await create_summary(doc)
+
         doc_chunks = await chunker.chunk_document(
             doc.export_to_markdown(),
             doc.name,
