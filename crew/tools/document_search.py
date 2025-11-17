@@ -74,7 +74,7 @@ class DocumentSearchTool(BaseTool):
         """Format the reranked results, using all available metadata."""
         return "".join([
             dedent("""
-                   # Chunk index {chunk_index} in "{filename}" on page {page_no} (score={score:.2f})
+                   ## Chunk index {chunk_index} in "{filename}" on page {page_no} (score={score:.2f})
 
                    {content}
             """).format(
@@ -91,31 +91,37 @@ class DocumentSearchTool(BaseTool):
         results = client.search(collection_name="knowledge", query=query, limit=VECTOR_TOP_K)
 
         if not results:
-            return "No relevant documents found."
+            return "No relevant information found."
 
-        reranked = self._rerank(query, results)
+        reranked = self._rerank(query, results)[:RERANK_TOP_K]
         document_names = set()
 
-        for result in results:
+        for result in reranked:
             name = result.get('metadata', {}).get('title')
 
             if name:
                 document_names.add(name)
 
-        summaries = ""
+        summaries = []
 
         for name in document_names:
             summary_path = f"knowledge/{name}.summary.md"
-            try:
-                with open(summary_path, "r", encoding="utf-8") as f:
-                    summaries += f.read() + "\n\n"
-            except FileNotFoundError:
-                ...
-                # summaries += f"## {name}\n_No summary found._\n"
 
-        formatted_results = self._format_results(reranked[:RERANK_TOP_K])
-        return f"{formatted_results}\n\n---\n\n{summaries}"
+            with open(summary_path, "r", encoding="utf-8") as f:
+                summaries.append(f.read())
 
+        return dedent(
+            """
+            # Chunks found
+            {chunks}
+
+            # Documents involved
+
+            {summaries}
+            """).format(
+                chunks=self._format_results(reranked),
+                summaries="\n\n".join(summaries)
+            )
 
 
 @click.command()

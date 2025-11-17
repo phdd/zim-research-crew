@@ -56,7 +56,7 @@ def import_knowledge():
         str(p) for p in knowledge_dir.rglob("*") 
         if p.is_file() 
             and not p.name.startswith(".") 
-            and not p.suffix == ".summary.md"]
+            and not p.name.endswith(".summary.md")]
 
     allowed_suffixes = {fmt.value for fmt in converter.allowed_formats}
     valid_files = []
@@ -103,7 +103,7 @@ def import_knowledge():
                 You are an assistant that analyzes documents. You classify the snippet and create a summary of 3 sentences without giving details about the contents. Always use the document's language. Use the following md-format without fences like "```":
 
                 ```
-                # {doc.name}
+                ## {doc.name}
     
                 Type: <type of document, e.g., Contract, Report, Email, Invoice, etc.>
                 Creator: <document creator if available>
