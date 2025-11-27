@@ -1,226 +1,123 @@
-document_research:
+initial_intake_processing:
   description: |
-    Document Research:
+    Read and analyze the initial intake.md file to identify missing mandatory information for ZIM compliance. Check for all required elements across the 8 ZIM mandatory sections:
 
-    1. Read the file `request.md` to understand the user's request by using the workspace_file_read tool.
-    2. Think about relevant research questions (and variations) you will answer with the documents. 
-    3. Find and extract relevant facts, insights and data from internal documents by using the document_search tool.  
-        Organize your findings clearly. Use bullet points grouped by topic, theme, or aspect.  
-        For every finding, cite the filename and page as the source.
+      - Ausgangssituation und Marktbedarf
+      - Technologische Entwicklung
+      - Technische Funktionalitäten
+      - Risiken
+      - Konkurrenzprodukte/Stand der Technik
+      - Potential des Antragstellers
+      - Fachliche Eignung des Personals
+      - Markteinführungskonzept
 
-    Important rules:
-      - Context should only be used for research and will be left out of the final report.
-      - Create your own research findings structure (request structure will be considered separately later)
-      - sources must be full filenames of documents with page numbers included
-      - findings should only include content from internal documents, not from Jira or Confluence
-      - Avoid irrelevant information at all costs
-      - If you dont know something or research had no results, just tell it straight
-      - Use only the document_search tool to find relevant document chunks (workspace_file_read is for reading `request.md`).
-      - Do not use horizontal lines (---)
-      - Use markdown without "```"
-
-    Sometimes the user references information from another system explicitly. Do not create research subtasks for those topics. For example:
-      "Find out what the title of the issue CXAP4-12 is in Jira" (you know that you don't need to research internal documents for that).
+    If critical information is missing, ask the human for clarification and append all responses to intake.md under a new section '## Ergänzungen (automatisch)' with Q/A bullets and timestamps.
 
   expected_output: |
-    A detailed, well-structured research report in Markdown.
+    The file intake.md was written/updated with all necessary information for ZIM compliance. If significant gaps remain, open_questions.md was also written. Do not include the file contents in the output.
 
-  async_execution: false
-  agent: document_knowledge_manager
-
+  agent: intake_curator
+  human_input: true
   tools:
     - document_search
     - document_chunk_context
     - workspace_file_read
+    - workspace_file_write
 
-confluence_research:
+extract_zim_compliance_guidelines:
   description: |
-    Confluence Research:
-
-    1. Read the file `request.md` to understand the user's request by using the workspace_file_read tool.
-    2. Think about relevant research questions (and variations) you will answer with the Confluence Wiki. 
-    3. Extract relevant facts, insights and data. Organize your findings clearly.  
-      Use bullet points grouped by topic, theme, or aspect.  
-      For every finding, cite the URL as the source.
-
-    Important rules:
-      - get the full page with confluence_get_page after identifying relevant pages
-      - findings should only include content from Confluence, not from Jira
-      - Create your own research findings structure (request structure will be considered separately later)
-      - sources must be full URLs to the Confluence pages
-      - Avoid irrelevant information at all costs
-      - If you dont know something or research had no results, just tell it straight
-      - Do not use horizontal lines (---)
-      - Use markdown without "```"
-
-    Sometimes the user references information from another system explicitly. Avoid researching those topics. For example:
-      "Find out what the title of the issue CXAP4-33 is in Jira" (you know that you don't need to research Confluence for that).
-
-    ---
-    confluence_available: {confluence_available}
+    Search internal documents for ZIM compliance guidelines, project description templates, and evaluation criteria.
+    Focus on finding actionable rules for each of the 8 mandatory sections, quality criteria, prohibited language patterns, and evidence requirements.
+    Extract concrete guidelines about what content must be included, how technical aspects should be presented, and what constitutes sufficient evidence for novelty and feasibility claims.
 
   expected_output: |
-    A detailed, well-structured research report in Markdown or "Confluence not available".
+    The file compliance_checklist.md was written with all required content, criteria, and references. Do not include the file contents in the output.
 
-  async_execution: false
-  agent: atlassian_knowledge_manager
-
+  agent: zim_compliance_extractor
   context:
-    - document_research
+    - initial_intake_processing
+  tools:
+    - document_search
+    - document_chunk_context
+    - workspace_file_read
+    - workspace_file_write
 
+formalize_success_metrics:
+  description: |
+    Transform the informal success descriptions from intake.md into formal, measurable criteria suitable for ZIM evaluation.
+    Define specific technical functionalities, measurable parameters (accuracy, latency, throughput, robustness, energy consumption, error rates), detailed measurement methods and test setups, and clear acceptance criteria.
+    If essential measurement details are missing (data sources, test environments, reference standards), ask the human for clarification and update intake.md accordingly.
+
+  expected_output: |
+    The file intake.md was updated with the section '## Erfolgskriterien (formalisiert)'. Do not include the file contents in the output.
+
+  agent: success_metrics_formalizer
+  context:
+    - initial_intake_processing
+    - extract_zim_compliance_guidelines
+  tools:
+    - document_search
+    - document_chunk_context
+    - workspace_file_read
+    - workspace_file_write
+
+research_state_of_the_art_and_competition:
+  description: |
+    Conduct comprehensive web research to identify international state-of-the-art technologies and competitive solutions in the project domain.
+    Focus on patents, scientific papers, commercial products, and technical standards.
+    Search using technology keywords, use cases, and English/international terminology.
+    Prioritize high-quality sources over blog content.
+    Document 10-20 authoritative sources with detailed relevance analysis and extract key technical claims that establish the current state-of-the-art.
+
+  expected_output: |
+    The file sota_research.md was written with all required research results. Do not include the file contents in the output.
+
+  agent: sota_competition_researcher
+  context:
+    - formalize_success_metrics
+  tools:
+    - document_search
+    - document_chunk_context
+    - workspace_file_read
+    - workspace_file_write
+    - scrape_website
+    - web_search
+
+write_final_zim_project_description:
+  description: |
+    Create a complete, ZIM-compliant project description following the 8 mandatory sections structure.
+    Use technical, objective language avoiding marketing terminology.
+    Include a project profile section with company details, project leader, timeline, and technical core.
+    Integrate intake information naturally throughout the document and reference state-of-the-art findings using [Sx] notation.
+    Mark any missing information with [[FEHLT: ...]] rather than inventing facts.
+    Ensure all claims are supported by evidence.
+
+  expected_output: |
+    The file project_description_final.md was written with the complete ZIM-compliant project description. Do not include the file contents in the output.
+
+  agent: zim_technical_writer
+  context:
+    - research_state_of_the_art_and_competition
   tools:
     - workspace_file_read
+    - workspace_file_write
 
-  mcp_tools:
-    - confluence_search
-    - confluence_search_user
-    - confluence_get_page
-    - confluence_get_page_children
-    - confluence_get_comments
-    - confluence_get_labels
-
-jira_research:
+quality_assurance_review:
   description: |
-    Jira Research:
-
-    1. Read the file `request.md` to understand the user's request by using the workspace_file_read tool.
-    2. Think about relevant research questions (and variations) you will answer with the Jira System. 
-    3. Extract relevant resources and organize your findings clearly.  
-      Use bullet points grouped by topic, theme, or aspect.  
-      For every finding, cite the URL as the source.
-
-
-    Important rules:
-      - findings should only include content from Jira, not from Confluence
-      - Create your own research findings structure (request structure will be considered separately later)
-      - sources must be full URLs to the Jira issues or resources
-      - Avoid irrelevant information at all costs
-      - If you dont know something or research had no results, just tell it straight
-      - Always use jira_base_url for source links.
-      - Do not use horizontal lines (---)
-      - Use markdown without "```"
-
-    Sometimes the user references information from another system explicitly. Avoid researching those topics. For example:
-      "Get the headline of Confluence page 46596097" (you know that you don't need to research Jira for that).
-
-    ---
-    jira_available: {jira_available}
-    jira_base_url: {jira_url}
+    Perform comprehensive quality assurance on the final project description as if evaluating for ZIM funding approval.
+    Check completeness of all 8 sections, measurability of goals and parameters, proper evidence support for all state-of-the-art claims using [Sx] references, absence of marketing language, and internal consistency across timeline, milestones, work packages, and objectives.
+    If critical issues are found, correct them directly or create focused questions for human input.
+    Update both the project description and create a detailed review report.
 
   expected_output: |
-    A detailed, well-structured research result (as Markdown) or "Jira not available".
+    The files review_report.md and project_description_final.md were written/updated with the review findings and corrections. Do not include the file contents in the output.
 
-  async_execution: false
-  agent: atlassian_knowledge_manager
-
+  agent: red_team_reviewer
+  human_input: true
   context:
-    - document_research
-
+    - write_final_zim_project_description
   tools:
+    - document_search
+    - document_chunk_context
     - workspace_file_read
-
-  mcp_tools:
-    - jira_search
-    - jira_search_fields
-    - jira_get_user_profile
-    - jira_get_issue
-    - jira_get_project_issues
-    - jira_get_transitions
-    - jira_get_worklog
-    - jira_get_agile_boards
-    - jira_get_board_issues
-    - jira_get_sprints_from_board
-    - jira_get_sprint_issues
-    - jira_get_link_types
-    - jira_get_project_versions
-    - jira_get_all_projects
-    - jira_batch_get_changelogs
-    # - jira_download_attachments
-
-write_report:
-  description: |
-    1. Read the file `request.md` to understand the user's request.
-    2. Study all the research results available.
-    3. Create a clean, well-written and logically structured answer or report based on the research results.  
-      Be clear, concise and professional. If structure from the users request is implied, follow it. Every statement or claim must be clearly sourced:
-
-      - Documents: A Markdown link directly after the content, always with the folder `../knowledge/`, e.g. [Source Document.pdf Page 9](../knowledge/Source%20Document.pdf)
-      - Web links: A Markdown link directly after the content, e.g. [PageName](https://...)
-
-    Important:
-      - If a statement does not have a source, it must not appear
-      - Do not use horizontal lines (---)
-      - Use markdown without "```"
-
-  expected_output: |
-    A well-written, structured report in Markdown.
-
-  agent: corporate_communications_specialist
-
-  context:
-    - document_research
-    - confluence_research
-    - jira_research
-
-review_report:
-  description: |
-    Review the report for structure, clarity, factual completeness, writing quality, and especially for correct and complete citations.  
-    Every statement must have a source. Use the following citation format:
-
-      - Documents: A Markdown link directly after the content, always with the folder `../knowledge/`, e.g. [Source Document.pdf Page 3](../knowledge/Source%20Document.pdf)
-      - Web links: A Markdown link directly after the content, e.g. [PageName](https://...)
-
-    If improvements are needed, list them specifically. If the text is solid, give a clear approval.
-
-  expected_output: >
-    Either "approved" or "changes_requested" with a list of specific points to fix.
-
-    Approval Example:
-
-    {
-      "result": "approved",
-      "requested_changes": []
-    }
-
-    Change Request Example:
-
-    {
-      "result": "changes_requested",
-      "requested_changes": [
-        "Citation `[Doc.pdf Page 2](Doc.pdf)` must be relative to the '../knowledge/' directory.",
-        "Citation `[Stuff XY.pdf](../knowledge/Stuff%20XY.pdf)` must have a page number.",
-        "Link [https://api.example.com/data] must be a user-facing link.",
-        "Several statements in the 'Recommendations' section lack sources and must be supported by evidence from the research."
-      ]
-    }
-
-  agent: critical_reviewer
-
-  context:
-    - write_report
-
-improve_report:
-  description: |
-    The report has been reviewed and needs improvements. 
-
-    1. Improve the report according to the reviewer's feedback. 
-       Address every point raised, especially regarding structure, clarity, completeness, writing quality, and source citations. 
-    2. Write the polished, final version that meets all criteria to `report.md`.
-
-    Important:
-      - always write the file and never return the report directly
-      - If a statement does not have a source, it must not appear
-      - Do not use horizontal lines (---)
-      - Use markdown without "```"
-
-  expected_output: >
-    If you are done, say "Report Done".
-
-  agent: corporate_communications_specialist
-
-  context:
-    - write_report
-    - review_report
-
-  tools:
     - workspace_file_write

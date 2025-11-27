@@ -2,13 +2,8 @@
 __pycache__/
 .DS_Store
 
-knowledge/*
-!knowledge/.gitkeep
+knowledge/*.summary.md
 
 workspace/*
-user-input.md
 
-report.md
-reports/
-knowledge-excluded/
 testing.py

@@ -32,9 +32,6 @@ def kickoff():
     """
 
     output = ProjectResearchCrew().crew().kickoff(inputs={
-        "jira_url": os.getenv("JIRA_URL", ""),
-        "jira_available": bool(os.getenv("JIRA_API_TOKEN", "")),
-        "confluence_available": bool(os.getenv("CONFLUENCE_API_TOKEN", "")),
         "current_date": datetime.now().strftime("%Y-%m-%d"),
     })
     

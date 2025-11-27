@@ -3817,31 +3817,6 @@ wheels = [
 ]
 
 [[package]]
-name = "project-research-crew"
-version = "0.1.0"
-source = { virtual = "." }
-dependencies = [
-    { name = "chainlit" },
-    { name = "crewai", extra = ["tools"] },
-    { name = "crewai-tools", extra = ["mcp"] },
-    { name = "docling" },
-    { name = "mcp" },
-    { name = "qdrant-client" },
-    { name = "sentence-transformers" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "chainlit", specifier = ">=2.8.3" },
-    { name = "crewai", extras = ["tools"], specifier = "==1.1.0" },
-    { name = "crewai-tools", extras = ["mcp"], specifier = ">=1.1.0" },
-    { name = "docling", specifier = ">=2.58.0" },
-    { name = "mcp", specifier = ">=1.18.0" },
-    { name = "qdrant-client", specifier = ">=1.15.1" },
-    { name = "sentence-transformers", specifier = ">=5.1.2" },
-]
-
-[[package]]
 name = "prompt-toolkit"
 version = "3.0.52"
 source = { registry = "https://pypi.org/simple" }
@@ -6198,6 +6173,31 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/87/03/68c69b2d3e282d45cb3c07e5836a9146ff9574cde720570ffc7eb124e56b/youtube_transcript_api-1.2.3.tar.gz", hash = "sha256:76016b71b410b124892c74df24b07b052702cf3c53afb300d0a2c547c0b71b68", size = 469757, upload-time = "2025-10-13T15:57:17.532Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/ef/75/a861661b73d862e323c12af96ecfb237fb4d1433e551183d4172d39d5275/youtube_transcript_api-1.2.3-py3-none-any.whl", hash = "sha256:0c1b32ea5e739f9efde8c42e3d43e67df475185af6f820109607577b83768375", size = 485140, upload-time = "2025-10-13T15:57:16.034Z" },
+]
+
+[[package]]
+name = "zim-research-crew"
+version = "0.1.0"
+source = { virtual = "." }
+dependencies = [
+    { name = "chainlit" },
+    { name = "crewai", extra = ["tools"] },
+    { name = "crewai-tools", extra = ["mcp"] },
+    { name = "docling" },
+    { name = "mcp" },
+    { name = "qdrant-client" },
+    { name = "sentence-transformers" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "chainlit", specifier = ">=2.8.3" },
+    { name = "crewai", extras = ["tools"], specifier = "==1.1.0" },
+    { name = "crewai-tools", extras = ["mcp"], specifier = ">=1.1.0" },
+    { name = "docling", specifier = ">=2.58.0" },
+    { name = "mcp", specifier = ">=1.18.0" },
+    { name = "qdrant-client", specifier = ">=1.15.1" },
+    { name = "sentence-transformers", specifier = ">=5.1.2" },
 ]
 
 [[package]]

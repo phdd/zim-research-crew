@@ -6,8 +6,7 @@ from mcp import StdioServerParameters
 from crewai import Agent, Crew, Task
 from crewai.project import CrewBase, agent, crew, task, tool
 from crewai.agents.agent_builder.base_agent import BaseAgent
-from crewai.tasks.conditional_task import ConditionalTask
-from crewai.tasks.task_output import TaskOutput
+from crewai_tools import SerperDevTool, ScrapeWebsiteTool
 
 from crew.tools import (
     DocumentChunkContextTool,
@@ -86,32 +85,48 @@ class ProjectResearchCrew:
     def workspace_file_write(self):
         return WorkspaceFileWriteTool()
 
-    @agent
-    def atlassian_knowledge_manager(self):
-        return Agent(
-            config=self.agents_config["atlassian_knowledge_manager"],  # type: ignore[index]
-            verbose=True
-        )
+    @tool
+    def web_search(self):
+        return SerperDevTool()
     
+    @tool
+    def scrape_website(self):
+        return ScrapeWebsiteTool()
+
     @agent
-    def document_knowledge_manager(self) -> Agent:
+    def intake_curator(self) -> Agent:
         return Agent(
-            config=self.agents_config["document_knowledge_manager"],  # type: ignore[index]
-            verbose=True
-        )
-    
-    @agent
-    def corporate_communications_specialist(self) -> Agent:
-        return Agent(
-            config=self.agents_config["corporate_communications_specialist"],  # type: ignore[index]
-            verbose=True
+            config=self.agents_config["intake_curator"],  # type: ignore[index]
         )
 
     @agent
-    def critical_reviewer(self) -> Agent:
+    def zim_compliance_extractor(self) -> Agent:
         return Agent(
-            config=self.agents_config["critical_reviewer"],  # type: ignore[index]
-            verbose=True
+            config=self.agents_config["zim_compliance_extractor"],  # type: ignore[index]
+        )
+
+    @agent
+    def success_metrics_formalizer(self) -> Agent:
+        return Agent(
+            config=self.agents_config["success_metrics_formalizer"],  # type: ignore[index]
+        )
+
+    @agent
+    def sota_competition_researcher(self) -> Agent:
+        return Agent(
+            config=self.agents_config["sota_competition_researcher"],  # type: ignore[index]
+        )
+
+    @agent
+    def zim_technical_writer(self) -> Agent:
+        return Agent(
+            config=self.agents_config["zim_technical_writer"],  # type: ignore[index]
+        )
+
+    @agent
+    def red_team_reviewer(self) -> Agent:
+        return Agent(
+            config=self.agents_config["red_team_reviewer"],  # type: ignore[index]
         )
 
     # To learn more about structured task outputs,
@@ -119,46 +134,39 @@ class ProjectResearchCrew:
     # https://docs.crewai.com/concepts/tasks#overview-of-a-task
     
     @task
-    def document_research(self) -> Task:
+    def initial_intake_processing(self) -> Task:
         return Task(
-            config=self.tasks_config["document_research"],  # type: ignore[index]
-        )
-    
-    @task
-    @with_mcp_tools
-    def confluence_research(self) -> Task:
-        return Task(
-            config=self.tasks_config["confluence_research"],  # type: ignore[index]
-        )
-    
-    @task
-    @with_mcp_tools
-    def jira_research(self) -> Task:
-        return Task(
-            config=self.tasks_config["jira_research"],  # type: ignore[index]
+            config=self.tasks_config["initial_intake_processing"],  # type: ignore[index]
         )
 
     @task
-    def write_report(self) -> Task:
+    def extract_zim_compliance_guidelines(self) -> Task:
         return Task(
-            config=self.tasks_config["write_report"],  # type: ignore[index]
+            config=self.tasks_config["extract_zim_compliance_guidelines"],  # type: ignore[index]
         )
 
     @task
-    def review_report(self) -> Task:
+    def formalize_success_metrics(self) -> Task:
         return Task(
-            config=self.tasks_config["review_report"],  # type: ignore[index]
-            output_pydantic=ReviewOutput,
+            config=self.tasks_config["formalize_success_metrics"],  # type: ignore[index]
         )
-    
-    @task
-    def improve_report(self) -> ConditionalTask:
-        def changes_requested(output: TaskOutput) -> bool:
-            return output.pydantic.result == "changes_requested" # type: ignore
 
-        return ConditionalTask(
-            config=self.tasks_config["improve_report"],  # type: ignore[index]
-            condition=changes_requested
+    @task
+    def research_state_of_the_art_and_competition(self) -> Task:
+        return Task(
+            config=self.tasks_config["research_state_of_the_art_and_competition"],  # type: ignore[index]
+        )
+
+    @task
+    def write_final_zim_project_description(self) -> Task:
+        return Task(
+            config=self.tasks_config["write_final_zim_project_description"],  # type: ignore[index]
+        )
+
+    @task
+    def quality_assurance_review(self) -> Task:
+        return Task(
+            config=self.tasks_config["quality_assurance_review"],  # type: ignore[index]
         )
 
     @crew

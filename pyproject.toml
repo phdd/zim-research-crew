@@ -1,7 +1,7 @@
 [project]
-name = "project_research_crew"
+name = "zim_research_crew"
 version = "0.1.0"
-description = "project-research-crew using crewAI"
+description = "zim-research-crew using crewAI"
 authors = [{ name = "Your Name", email = "you@example.com" }]
 requires-python = ">=3.10,<3.14"
 dependencies = [
