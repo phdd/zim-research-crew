@@ -24,6 +24,17 @@ Welcome to the Project, powered by [crewAI](https://crewai.com). This template i
       uv run main.py kickoff
       ```
 
+# Knowledge Download
+
+To automatically download all official ZIM and related documents into your `knowledge/` folder, use:
+
+```bash
+uv run main.py download-knowledge
+```
+
+This will fetch all relevant PDFs with meaningful filenames, so you can directly proceed to import and process them.
+
+
 ## Crew
 
 ### Cloud Traces

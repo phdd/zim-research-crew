@@ -1,7 +1,8 @@
 #!.venv/bin/python
-import os
 import sys
 import asyncio
+import requests
+import shutil
 
 from datetime import datetime
 from pathlib import Path
@@ -19,11 +20,13 @@ from crew.utils.chunker import create_chunker, ChunkingConfig
 from docling.document_converter import DocumentConverter
 from docling_core.types.doc import DoclingDocument
 from textwrap import dedent
+import subprocess
+import tempfile
 
 logger = logging.getLogger(__name__)
 
-if not Path("workspace/request.md").exists():
-    Path("workspace/request.md").write_text(Path("request.example.md").read_text(encoding='utf-8'), encoding='utf-8')
+if not Path("workspace/intake.md").exists():
+    Path("workspace/intake.md").write_text(Path("intake.example.md").read_text(encoding='utf-8'), encoding='utf-8')
 
 @click.command()
 def kickoff():
@@ -36,6 +39,52 @@ def kickoff():
     })
     
     print(f"Token Usage: {output.token_usage}")
+
+@click.command()
+def download_knowledge():
+    """
+    Download knowledge files into the knowledge directory.
+    """
+    url_map = {
+        "Förderrichtlinie Zentrales Innovationsprogramm Mittelstand.pdf": "https://www.zim.de/ZIM/Redaktion/DE/Downloads/Richtlinien/richtlinie-zim-2025.pdf?__blob=publicationFile&v=7",
+        "Förderrichtlinie Zentrales Innovationsprogramm Mittelstand - Kerninhalt.pdf": "https://www.zim.de/ZIM/Redaktion/DE/Downloads/Richtlinien/richtlinie-zim-2025-kerninhalt.pdf?__blob=publicationFile&v=5",
+        "Richtlinie zur Förderung von Transformationsprojekten.pdf": "https://www.bibb.de/dokumente/pdf/BAnz%20AT%2028.11.2024%20B1.pdf",
+        "Bundeshaushaltsordnung.pdf": "https://www.gesetze-im-internet.de/bho/BHO.pdf",
+        "Allgemeine Verwaltungsvorschriften zur Bundeshaushaltsordnung.pdf": "https://www.esf.de/portal/SharedDocs/PDFs/DE/Recht_VO/FP-2014-2020/vv_bho_44.pdf?__blob=publicationFile&v=1",
+        "Allgemeine Nebenbestimmungen für Zuwendungen zur Projektförderung auf Kostenbasis (ANBest-P-Kosten).pdf": "https://www.bva.bund.de/SharedDocs/Downloads/DE/Aufgaben/ZMV/Zuwendungen_national/nebenbestimmungen_anbest_p_kosten_2025.pdf?__blob=publicationFile&v=4",
+        "Hinweise für Antragsteller.pdf": "https://www.zim.de/ZIM/Redaktion/DE/Downloads/Formularcenter/A_Phase-Antrag/B_Kooperationsprojekt/B1_Ohne-Netzwerk/Downloads/hinweise-fuer-antragstellung-koop.pdf?__blob=publicationFile&v=2",
+        "Hilfestellung zum Ausfüllen der Formulare.pdf": "https://www.zim.de/ZIM/Redaktion/DE/Downloads/Formularcenter/A_Phase-Antrag/B_Kooperationsprojekt/B1_Ohne-Netzwerk/Downloads/formular-hilfe-koop.pdf?__blob=publicationFile&v=2",
+        "Beispiele für Leistungen zur Markteinführung.pdf": "https://www.zim.de/ZIM/Redaktion/DE/Downloads/beispiele-fuer-leistungen-zur-markteinfuehrung_2020.pdf?__blob=publicationFile&v=1",
+        "Informationblatt - Einstufung von Unternehmen.pdf": "https://www.zim.de/ZIM/Redaktion/DE/Downloads/Formularcenter/A_Phase-Antrag/A_Einzelprojekt/B2_Mit-Netzwerk/Downloads/unternehmenstyp.pdf?__blob=publicationFile&v=1",
+    }
+
+    for filename, url in url_map.items():
+        print(url)
+
+        path = f"knowledge/{filename}"
+        response = requests.get(url, timeout=30)
+        response.raise_for_status()
+
+        with open(path, "wb") as f:
+            f.write(response.content)
+
+        with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as tmp:
+            tmp_path = tmp.name
+        
+        # TODO replace subprocess
+        # with pikepdf.open(path) as pdf:
+        #     pdf.save(tmp_path, compression=pikepdf.CompressionLevel.prepress)
+
+        subprocess.run([
+            "gs",
+            "-o", tmp_path,
+            "-sDEVICE=pdfwrite",
+            "-dPDFSETTINGS=/prepress",
+            path
+        ], check=True)
+        
+        shutil.move(tmp_path, path)
+
 
 @click.command()
 def import_knowledge():
@@ -160,5 +209,6 @@ def cli():
 
 if __name__ == '__main__':
     cli.add_command(kickoff)
+    cli.add_command(download_knowledge)
     cli.add_command(import_knowledge)
     cli()
