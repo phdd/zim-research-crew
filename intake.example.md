@@ -1,31 +1,40 @@
+# intake.md (NVDD – Machbarkeitsstudie / Durchführbarkeitsstudie)
+
+## Antragsteller (Stammdaten)
+- Firmenname: Neustädter Verpackung Vertriebs-GmbH (NVDD)
+- Adresse: Magazinstr. 15 A, 01099 Dresden, Deutschland
+- Umsatzsteuer-Identifikationsnummer (USt-IdNr.): DE 243 512 790
+- Website/Impressum-Link (optional, für Stammdatenabgleich): https://www.nv-dresden.de/
+
 ## Projekt (Machbarkeitsstudie / Durchführbarkeitsstudie)
-- Projekttitel (Arbeitstitel): KI-Assistenzplattform für Buchhalter:innen – Belegfluss, Rückfragen & Buchungsvorschläge aus einer Oberfläche
-- Kontext in 2–4 Sätzen: In vielen Buchhaltungen entstehen Verzögerungen durch fehlende/unsaubere Belege, Medienbrüche (E-Mail, WhatsApp, Papier), unklare Zuständigkeiten und manuelle Vorprüfung. Es gibt bereits sehr nutzerfreundliche Kanzlei-/Mandanten-Apps, die Belegtransfer und Kommunikation chatnah bündeln und Workflows visuell steuern (z. B. Aufgaben-/Kanban-Logik, automatische Erinnerungen). Wir wollen ein ähnliches Nutzungsgefühl speziell für **Buchhalter:innen** schaffen – ergänzt um KI, die Unterlagen vorsortiert, Rückfragen automatisiert vorbereitet und Buchungsvorschläge zur Prüfung liefert.
-- Technischer Ansatz (3–8 Stichpunkte): was soll technologisch geprüft/validiert werden?:
-  - Inbox für Belege aus App/Web/Weiterleitungen + Zuordnung zu Vorgängen (Fall/Monat/Lieferant/Kostenstelle)
-  - KI-gestützte Beleg-Extraktion (OCR + Struktur) und Klassifizierung (Rechnung/Quittung/Vertrag etc.)
-  - KI-Assistent, der fehlende Pflichtangaben erkennt (z. B. Leistungsdatum, Rechnungsnummer, USt-Infos) und Rückfragen als Chat-„Tasks“ formuliert
-  - Buchungsvorschläge (Kontierung/Steuerschlüssel/Kostenstelle) als „Review-Queue“ mit Confidence & Begründung
-  - Workflow-Steuerung wie in einfachen Kollaborationstools: Vorgänge wandern durch Status (eingegangen → geprüft → Rückfrage → freigegeben → exportiert)
-  - Integrationskonzept (z. B. DATEV-Export / API-Connector zu gängigen Systemen) + Audit-Trail (wer hat wann was entschieden)
-  - Sicherheits-/Rechtekonzept (Mandantendaten, Rollen, Protokollierung) + DSGVO-konformes Hosting-Setup (Machbarkeit)
+- Projekttitel (Arbeitstitel): KI-gestützte E-Mail- & Vorgangsautomatisierung für Verpackungsprozesse
+- Kontext: Als Anbieter von Industrieverpackungen entstehen täglich viele eingehende E-Mails (Anfragen, Angebotsrückläufe, Bestellungen, Terminfragen, Reklamationen) inklusive Anhängen und unstrukturierten Informationen. Heute werden Nachrichten manuell gelesen, verteilt, nachgefasst und in Systeme/Dateiablagen übertragen; dadurch entstehen Medienbrüche, Wartezeiten und Fehler (vergessene Rückfragen, doppelte Erfassung, fehlende Dokumentation). Ziel ist, die E-Mail-Verarbeitung durch KI so zu beschleunigen, dass aus E-Mails automatisch nachvollziehbare Vorgänge mit Aufgaben, Fristen und Dokumentation entstehen (mit Human-in-the-loop).
+- Technischer Ansatz: was soll technologisch geprüft/validiert werden?:
+  - E-Mail-Ingestion aus zentralen Postfächern inkl. Anhänge (PDF, Bilder, Office) + Thread-/Kontext-Zusammenführung
+  - Vorgangstyp-/Intent-Klassifikation (z. B. Anfrage/Angebot, Bestellung, Liefertermin, Reklamation, Rückfrage, Rechnung/sonstiges)
+  - Focus auf Sprachmodelle (LLMs) und Multi-Agenten-Systemen / Deep Agents zur automatisierten Analyse, Entscheidungsfindung und Prozesssteuerung (sicherheit durch guardrails betonen)
+  - Struktur-Extraktion zentraler Felder aus Mail/Anhang (Kunde/Absender, Artikel/Material, Mengen, Termine, Referenzen, Lieferadresse/Logistik-Hinweise)
+  - Automatisches Anlegen von Vorgängen/Cases mit Aufgaben (Owner, Frist, Status), inkl. Checklisten (fehlende Angaben)
+  - Rückfragen-Generator: KI erkennt fehlende Informationen und schlägt Antwortentwürfe vor (mit Quellen aus Mail/Anhang)
+  - Dokumentation/Audit-Trail: Nachvollziehbarkeit von KI-Vorschlägen und menschlichen Korrekturen (wer/was/wann/warum)
+  - Integrationsmachbarkeit: ERP/CRM/DMS/Task-Tool via API/Export; Rollen-/Rechtekonzept und DSGVO-Prüfpunkte
+  - Qualitäts-/Sicherheitskonzept: Confidence Scores, Review-Queue, Fehlerklassen, Fallback-Regeln
 
 ## Erfolg (informell, wird formalisiert)
-- Woran erkennen wir am Ende der Machbarkeitsstudie, dass es „funktioniert“?
-  - Wir bekommen Belege schneller und vollständiger zusammen, ohne dauernd hinterher zu telefonieren oder E-Mails zu suchen.
-  - Rückfragen werden seltener und gezielter, weil das System automatisch erkennt, was fehlt, und eine verständliche Nachfrage vorbereitet.
-  - Buchungsvorschläge sind in vielen Standardfällen so gut, dass Buchhalter:innen nur noch prüfen und freigeben müssen.
-  - Die Oberfläche ist für Nicht-Techniker sofort nutzbar (wie Chat/ToDo), dadurch machen Mandant:innen/Fachabteilungen wirklich mit.
-  - Wir können sauber nachweisen, wer was wann gemacht hat (Audit-Trail), ohne extra Dokumentation.
-  - Es gibt eine klare Entscheidungsvorlage, ob ein FuE-Projekt zur Produktentwicklung lohnt (Technikrisiken, Integrationspfad, Aufwand/Nutzen).
+- Woran erkennen wir am Ende der Machbarkeitsstudie, dass es „funktioniert“? (Alltagssprache):
+  - Jede relevante E-Mail wird automatisch einem Vorgang zugeordnet oder als neuer Vorgang angelegt (nichts geht unter).
+  - Aufgaben entstehen automatisch mit Zuständigkeit und Frist; Prioritäten (z. B. Terminsachen/Reklamationen) sind sichtbar.
+  - Weniger manuelles Sortieren/Übertragen: die KI macht die Vorarbeit, Mitarbeitende prüfen nur noch und korrigieren bei Bedarf.
+  - Rückfragen werden seltener und zielgenauer, weil fehlende Pflichtinfos automatisch erkannt werden.
+  - Entscheidungen bleiben nachvollziehbar (warum Zuordnung so, welche Textstellen/Anhänge als Grundlage).
+  - Es gibt eine klare Go/No-Go-Vorlage fürs Folge-FuE-Projekt (Technikrisiken, Datenbasis, Integrationspfad, Aufwand/Nutzen).
 
 ## Team (Pflicht)
-- Antragsteller (Unternehmensname): Example Analytics GmbH
-- Projektleiter (Name + Rolle): Max Berger – Product & Engineering Lead (B2B SaaS / Dokumenten-Workflows)
+- Projektleiter (Geschäftsführer, Name + Rolle): Andreas Beck – Geschäftsführer (Dresden, Projektleitung, fachliche Steuerung)
+- Weitere Schlüsselrollen (Name – Organisation – Rolle):
+  - Peter Heisig (Dresden) – sit.institute GmbH – Technische Leitung
+  - Tom Schreiber (Dresden) – sit.institute GmbH – KI-Entwicklung
 
 ## Rahmen
-- Geplante Laufzeit (Monate): 5
-- Bekannte Konkurrenz/Alternativen (optional, 0–3 Namen/Links):
-  - Klassische Beleg-/Rechnungs-Workflows (DMS/Invoice-Approval) ohne klare Buchhaltungs-Review-Logik
-  - Kanzlei-/Mandanten-Apps mit Chat + Belegtransfer + Workflow (als UX-Referenz, aber nicht auf Buchhalter:innen fokussiert)
-  - Buchhaltungssoftware mit OCR/Automatisierung (stark in Buchung, schwächer in Kollaboration/Rückfragensteuerung)
+- Geplante Laufzeit: 01/2026 bis 06/2026 (6 Monate)
+- Geplantes Budget (gesamt): 80.000 EUR (schätzung gewünscht)

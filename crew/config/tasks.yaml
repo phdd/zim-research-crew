@@ -1,23 +1,25 @@
 initial_intake_processing:
   description: |
-    Read and analyze the initial intake.md file to identify missing mandatory information for ZIM compliance. Check for all required elements across the 8 ZIM mandatory sections:
+    Read and analyze the initial intake.md file to identify missing mandatory information for ZIM compliance. Search for documents containing the rules for compliance. Check for all required elements across the 8 ZIM mandatory sections. 
 
-      - Ausgangssituation und Marktbedarf
-      - Technologische Entwicklung
-      - Technische Funktionalitäten
-      - Risiken
-      - Konkurrenzprodukte/Stand der Technik
-      - Potential des Antragstellers
-      - Fachliche Eignung des Personals
-      - Markteinführungskonzept
+     - Ausgangssituation und Marktbedarf
+     - Technologische Entwicklung
+     - Technische Funktionalitäten
+     - Risiken
+     - Konkurrenzprodukte/Stand der Technik
+     - Potential des Antragstellers
+     - Fachliche Eignung des Personals
+     - Markteinführungskonzept
 
-    If critical information is missing, ask the human for clarification and append all responses to intake.md under a new section '## Ergänzungen (automatisch)' with Q/A bullets and timestamps.
+     If information is missing, write all open questions clearly intake.md so they can be addressed during the state-of-the-art research. Use a special section '# Additional Questions to research' for that and dont modify the original intake information.
+
+    Never include file contents in the output! Always update "intake.md".
 
   expected_output: |
-    The file intake.md was written/updated with all necessary information for ZIM compliance. If significant gaps remain, open_questions.md was also written. Do not include the file contents in the output.
+    Message: "intake.md was updated with the section '## Additional Questions to research'."
 
   agent: intake_curator
-  human_input: true
+
   tools:
     - document_search
     - document_chunk_context
@@ -30,12 +32,16 @@ extract_zim_compliance_guidelines:
     Focus on finding actionable rules for each of the 8 mandatory sections, quality criteria, prohibited language patterns, and evidence requirements.
     Extract concrete guidelines about what content must be included, how technical aspects should be presented, and what constitutes sufficient evidence for novelty and feasibility claims.
 
+    Never include file contents in the output! Always write it to "compliance_checklist.md"
+
   expected_output: |
-    The file compliance_checklist.md was written with all required content, criteria, and references. Do not include the file contents in the output.
+    Message "compliance_checklist.md has been written."
 
   agent: zim_compliance_extractor
+
   context:
     - initial_intake_processing
+
   tools:
     - document_search
     - document_chunk_context
@@ -46,15 +52,19 @@ formalize_success_metrics:
   description: |
     Transform the informal success descriptions from intake.md into formal, measurable criteria suitable for ZIM evaluation.
     Define specific technical functionalities, measurable parameters (accuracy, latency, throughput, robustness, energy consumption, error rates), detailed measurement methods and test setups, and clear acceptance criteria.
-    If essential measurement details are missing (data sources, test environments, reference standards), ask the human for clarification and update intake.md accordingly.
+    If essential measurement details are missing (data sources, test environments, reference standards) update intake.md accordingly.
+
+    Never include file contents in the output! Always update "intake.md".
 
   expected_output: |
-    The file intake.md was updated with the section '## Erfolgskriterien (formalisiert)'. Do not include the file contents in the output.
+    Message: "intake.md was updated with the section '## Erfolgskriterien (formalisiert)'."
 
   agent: success_metrics_formalizer
+
   context:
     - initial_intake_processing
     - extract_zim_compliance_guidelines
+
   tools:
     - document_search
     - document_chunk_context
@@ -67,14 +77,24 @@ research_state_of_the_art_and_competition:
     Focus on patents, scientific papers, commercial products, and technical standards.
     Search using technology keywords, use cases, and English/international terminology.
     Prioritize high-quality sources over blog content.
-    Document 10-20 authoritative sources with detailed relevance analysis and extract key technical claims that establish the current state-of-the-art.
+    Document 10-20 authoritative sources. For each source, create a list item in the format:
+
+    - [Entity Extraction from Business Emails](https://dl.acm.org/doi/10.1145/3583780.3615462)
+      - Relevance: Focuses on extracting actionable business information (names, products, dates, quantities) from emails and attachments.
+      - Key Technical Claims: Named entity recognition, document-style detection, hybrid rule-based/ML field extraction integrated with workflow creation.
+
+    All references in the main text must use [^N] notation and be linked to the footnote list at the end of the document.
+
+    Never include file contents in the output! Always write it to "sota_research.md".
 
   expected_output: |
-    The file sota_research.md was written with all required research results. Do not include the file contents in the output.
+    Message: "file sota_research.md was written with all required research results."
 
   agent: sota_competition_researcher
+
   context:
     - formalize_success_metrics
+
   tools:
     - document_search
     - document_chunk_context
@@ -88,16 +108,25 @@ write_final_zim_project_description:
     Create a complete, ZIM-compliant project description following the 8 mandatory sections structure.
     Use technical, objective language avoiding marketing terminology.
     Include a project profile section with company details, project leader, timeline, and technical core.
-    Integrate intake information naturally throughout the document and reference state-of-the-art findings using [Sx] notation.
-    Mark any missing information with [[FEHLT: ...]] rather than inventing facts.
-    Ensure all claims are supported by evidence.
+    Integrate intake information naturally throughout the document and reference state-of-the-art findings using Markdown footnote notation [^N]. At the end of the document, include a footnote list with all referenced sources, formatted as in the following example (separated by two newlines to be a pararaph):
+
+    [^12]: [Entity Extraction from Business Emails](https://dl.acm.org/doi/10.1145/3583780.3615462)
+        - Relevance: Focuses on extracting actionable business information (names, products, dates, quantities) from emails and attachments.
+        - Key Technical Claims: Named entity recognition, document-style detection, hybrid rule-based/ML field extraction integrated with workflow creation.
+
+    If there is something unknown, you may check the intake.md as well as the sota_research.md for additional information.
+    Mark any missing information with [[FEHLT]] rather than inventing facts. Ensure all claims are supported by evidence and properly referenced.
+
+    Never include file contents in the output! Always write it to "project_description.md".
 
   expected_output: |
-    The file project_description_final.md was written with the complete ZIM-compliant project description. Do not include the file contents in the output.
+    Message: "project_description.md was written as the ZIM-compliant project description."
 
   agent: zim_technical_writer
+
   context:
     - research_state_of_the_art_and_competition
+
   tools:
     - workspace_file_read
     - workspace_file_write
@@ -105,19 +134,54 @@ write_final_zim_project_description:
 quality_assurance_review:
   description: |
     Perform comprehensive quality assurance on the final project description as if evaluating for ZIM funding approval.
-    Check completeness of all 8 sections, measurability of goals and parameters, proper evidence support for all state-of-the-art claims using [Sx] references, absence of marketing language, and internal consistency across timeline, milestones, work packages, and objectives.
-    If critical issues are found, correct them directly or create focused questions for human input.
-    Update both the project description and create a detailed review report.
+    Check completeness of all 8 sections, measurability of goals and parameters, proper evidence support for all state-of-the-art claims using Markdown footnote references ([^N]), absence of marketing language, and internal consistency across timeline, milestones, work packages, and objectives. Ensure the footnote list at the end of the document is complete and correctly formatted, following the example:
+
+    [^12]: [Entity Extraction from Business Emails](https://dl.acm.org/doi/10.1145/3583780.3615462)
+        - Relevance: Focuses on extracting actionable business information (names, products, dates, quantities) from emails and attachments.
+        - Key Technical Claims: Named entity recognition, document-style detection, hybrid rule-based/ML field extraction integrated with workflow creation.
+        
+    If critical issues are found, document them exclusively in the review report. The project description must not be edited directly.
+    Create only a detailed review report with all identified points of criticism, notes, and suggestions for improvement.
+
+    Never include file contents in the output! Always write it to "review_report.md".
 
   expected_output: |
-    The files review_report.md and project_description_final.md were written/updated with the review findings and corrections. Do not include the file contents in the output.
+    Message: "review_report.md was written with all identified issues and suggestions for improvement."
 
   agent: red_team_reviewer
-  human_input: true
+  # human_input: true
+
   context:
     - write_final_zim_project_description
+
   tools:
     - document_search
     - document_chunk_context
+    - workspace_file_read
+    - workspace_file_write
+
+incorporate_review_feedback:
+  description: |
+    Integrate all relevant feedback and criticism from the review report into the final project description file project_description_final.md.
+    Ensure that all identified issues, suggestions, and corrections from the review are addressed and clearly reflected in the updated project description.
+    Maintain ZIM compliance, technical accuracy, and objective language. Ensure all references are properly formatted as Markdown footnotes and the footnote list is complete, following the example:
+
+    [^12]: [Entity Extraction from Business Emails](https://dl.acm.org/doi/10.1145/3583780.3615462)
+      - Relevance: Focuses on extracting actionable business information (names, products, dates, quantities) from emails and attachments.
+      - Key Technical Claims: Named entity recognition, document-style detection, hybrid rule-based/ML field extraction integrated with workflow creation.
+
+    Document any remaining open points or unresolved feedback.
+
+    Never include file contents in the output! Always write it to "project_description_final.md".
+
+  expected_output: |
+    Message: "project_description_final.md was written with all review feedback incorporated 🎉"
+
+  agent: zim_technical_writer
+
+  context:
+    - quality_assurance_review
+
+  tools:
     - workspace_file_read
     - workspace_file_write

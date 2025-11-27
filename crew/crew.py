@@ -168,6 +168,12 @@ class ProjectResearchCrew:
         return Task(
             config=self.tasks_config["quality_assurance_review"],  # type: ignore[index]
         )
+    
+    @task
+    def incorporate_review_feedback(self) -> Task:
+        return Task(
+            config=self.tasks_config["incorporate_review_feedback"],  # type: ignore[index]
+        )
 
     @crew
     def crew(self) -> Crew:
